@@ -1,0 +1,29 @@
+Revision history for Games-Domino
+
+0.06    Fri Dec 12 03:00:50 2014
+        - Re-structured the code using 'Moo' i.e. downgrading from 'Moose'.
+        - Added package Games::Domino::Params to support common data types.
+        - Deleted Build.PL file.
+        - Deleted SIGNATURE file.
+        - Updated unit test to respect 'Moo'.
+
+0.05    Mon Aug 20 13:11:50 2012
+        - Fixed the typo in the pod for "DESCRIPTION".
+
+0.04    Sat Aug 18 21:33:29 2012
+        - Updated the text for "DESCRIPTION".
+
+0.03    Sat Aug 18 18:19:20 2012
+        - Major changes to let the user play with the computer (interactive mode).
+        - Fixed couple of bugs encountered while making changes.
+        - Minor cosmetics changes.
+        - Updated the sample game script (play-domino.pl) to reflect the changes in the core module.
+
+0.02    Thu Jul 26 16:38:29 2012
+        - Extended Games::Domino::Tile class to hold double property
+          as well top/bottom. This is to support the vertical branch.
+        - Added unit test around the new attributes.
+        - Fixed few typo in the pod for Games::Domino::Tile class.
+
+0.01    Thu Jul 26 04:00:00 2012
+        - First version, released.
