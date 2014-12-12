@@ -1,6 +1,6 @@
 package Games::Domino;
 
-$Games::Domino::VERSION = '0.06';
+$Games::Domino::VERSION = '0.07';
 
 =head1 NAME
 
@@ -8,7 +8,7 @@ Games::Domino - Interface to the Domino game.
 
 =head1 VERSION
 
-Version 0.06
+Version 0.07
 
 =cut
 
@@ -22,7 +22,7 @@ use Games::Domino::Params qw($ZeroOrOne $ZeroToSix);
 use Moo;
 use namespace::clean;
 
-use overload ( '""'  => \&as_string );
+use overload ('""' => \&as_string);
 
 select(STDOUT);
 $|=1;
@@ -121,7 +121,7 @@ sub play {
     else {
         my $index;
         do {
-            print {*STDOUT} "Pick your tile [" . $player->_available_indexes . "][B]? ";
+            print {*STDOUT} "Pick your tile [" . $player->_available_indexes . "] or [B]? ";
             $index = <STDIN>;
             chomp($index) if defined $index;
 
@@ -269,11 +269,11 @@ sub _instructions {
     my ($self) = @_;
 
     my $help = qq {
-   _____                               _____                  _
-  / ____|                          _ _|  __ \\                (_)
- | |  __  __ _ _ __ ___   ___  ___(_|_) |  | | ___  _ __ ___  _ _ __   ___
- | | |_ |/ _` | '_ ` _ \\ / _ \\/ __|   | |  | |/ _ \\| '_ ` _ \\| | '_ \\ / _ \\
- | |__| | (_| | | | | | |  __/\\__ \\_ _| |__| | (_) | | | | | | | | | | (_) \|
+   _____                                 _____                     _
+  / ____|                            _ _|  __ \\                  (_)
+ | |  __  __ _ _ __ ___    ___  __ _(_|_) |  | |  ___  _ __ ___  _ _ __   ___
+ | | |_ |/ _` | '_ ` _ \\ / _ \\/ __|   | |  | | / _ \\| '_  ` _ \\| | ' \\ / \\
+ | |__| | (_| | | | | | |  __/\\__ \\_ _| |__| | (_) | | | | | | | | | | (_)  \|
   \\_____|\\__,_|_| |_| |_|\\___||___(_|_)_____/ \\___/|_| |_| |_|_|_| |_|\\___/
 
 Tiles are numbered left to right starting with 1. Symbols used in this game are:

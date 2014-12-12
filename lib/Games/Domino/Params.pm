@@ -1,25 +1,24 @@
 package Games::Domino::Params;
 
-$Games::Domino::Params::VERSION = '0.06';
+$Games::Domino::Params::VERSION = '0.07';
 
 =head1 NAME
 
-Games::Domino::Params - Placeholder for parameters for Games::Domino
+Games::Domino::Params - Placeholder for parameters for Games::Domino.
 
 =head1 VERSION
 
-Version 0.06
+Version 0.07
 
 =cut
 
 use 5.006;
 use strict; use warnings;
 use Data::Dumper;
-
 use vars qw(@ISA @EXPORT @EXPORT_OK);
 
 require Exporter;
-@ISA = qw(Exporter);
+@ISA       = qw(Exporter);
 @EXPORT_OK = qw($ZeroOrOne $ZeroToSix $HorC);
 
 our $ZeroOrOne = sub {
@@ -31,9 +30,13 @@ our $ZeroToSix = sub {
 };
 
 our $HorC = sub {
-    die "Attribute (name) does not pass the type constraint [$_[0]].\n" unless ($_[0] =~ /^[H|C]$/i);
+    die "Attribute (name) does not pass the type constraint [$_[0]].\n"
+        unless ($_[0] =~ /^[H|C]$/i);
 };
 
+=head1 DESCRIPTION
+
+It is used internally by L<Games::Domino>.
 
 =head1 AUTHOR
 

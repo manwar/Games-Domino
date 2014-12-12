@@ -1,6 +1,6 @@
 package Games::Domino::Player;
 
-$Games::Domino::Player::VERSION = '0.06';
+$Games::Domino::Player::VERSION = '0.07';
 
 =head1 NAME
 
@@ -8,7 +8,7 @@ Games::Domino::Player - Represents the player of the Domino game.
 
 =head1 VERSION
 
-Version 0.06
+Version 0.07
 
 =cut
 
@@ -28,8 +28,7 @@ has 'show'  => (is => 'rw', default => sub { return 0 });
 
 =head1 DESCRIPTION
 
-The Games::Domino::Player class is used by Games::Domino class internally.  It is
-used internally.
+It is used internally by L<Games::Domino>.
 
 =head1 METHODS
 

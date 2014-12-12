@@ -1,6 +1,6 @@
 package Games::Domino::Tile;
 
-$Games::Domino::Tile::VERSION = '0.06';
+$Games::Domino::Tile::VERSION = '0.07';
 
 =head1 NAME
 
@@ -8,7 +8,7 @@ Games::Domino::Tile - Represents the tile of the Domino game.
 
 =head1 VERSION
 
-Version 0.06
+Version 0.07
 
 =cut
 
@@ -29,8 +29,7 @@ has 'bottom' => (is => 'rw', isa => $ZeroToSix);
 
 =head1 DESCRIPTION
 
-The Games::Domino::Tile class is used by Games::Domino class internally.It is used
-internally.
+It is used internally by L<Games::Domino>.
 
 =cut
 
@@ -40,8 +39,7 @@ around BUILDARGS => sub {
 
     unless (exists $_[0]->{double}) {
         if (defined($_[0]->{left})
-            && defined($_[0]->{right})
-            && ($_[0]->{left} == $_[0]->{right})) {
+            && defined($_[0]->{right}) && ($_[0]->{left} == $_[0]->{right})) {
             $_[0]->{double} = 1;
             $_[0]->{top} = $_[0]->{bottom} = $_[0]->{left};
         }
@@ -53,11 +51,11 @@ around BUILDARGS => sub {
     die("ERROR: Invalid double attribute for the tile.\n")
         if (defined($_[0]->{left})
             && defined($_[0]->{right})
-            && ( (($_[0]->{left} == $_[0]->{right})
-                  && ($_[0]->{double} != 1))
+            && ( (($_[0]->{left} == $_[0]->{right}) && ($_[0]->{double} != 1))
                  ||
-                 (($_[0]->{left} != $_[0]->{right})
-                  && ($_[0]->{double} != 0)) )) ;
+                 (($_[0]->{left} != $_[0]->{right}) && ($_[0]->{double} != 0))
+               )
+        );
 
     if ($_[0]->{double} == 1) {
         $_[0]->{top} = $_[0]->{bottom} = $_[0]->{left};
