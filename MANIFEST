@@ -5,6 +5,7 @@ lib/Games/Domino/Tile.pm
 lib/Games/Domino/Params.pm
 script/play-domino.pl
 Makefile.PL
+LICENSE
 MANIFEST
 MANIFEST.SKIP
 README
