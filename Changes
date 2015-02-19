@@ -1,5 +1,9 @@
 Revision history for Games-Domino
 
+0.09    Thu Feb 19 14:10:50 2015
+        - Added section SYNOPSIS.
+        - Minor tweak to the code in the pod document.
+
 0.08    Thu Feb 05 11:10:50 2015
         - Updated MANIFEST.SKIP file to ignore folder '_eumm'.
         - Added LICENSE file.

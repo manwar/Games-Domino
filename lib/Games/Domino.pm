@@ -1,6 +1,6 @@
 package Games::Domino;
 
-$Games::Domino::VERSION   = '0.08';
+$Games::Domino::VERSION   = '0.09';
 $Games::Domino::AUTHORITY = 'cpan:MANWAR';
 
 =head1 NAME
@@ -9,7 +9,7 @@ Games::Domino - Interface to the Domino game.
 
 =head1 VERSION
 
-Version 0.08
+Version 0.09
 
 =cut
 
@@ -63,7 +63,37 @@ shuffle to start the the game.
     use strict; use warnings;
     use Games::Domino;
 
-    my $domino = Games::Domino->new();
+    my $game = Games::Domino->new();
+
+=head1 SYNOPSIS
+
+Below is working code for the Domino game using the L<Games::Domino> package. The
+script is supplied with the distribution and can be download
+<here|https://raw.githubusercontent.com/Manwar/Games-Domino/master/script/play-domino.pl>
+
+    use strict; use warnings;
+    use Games::Domino;
+
+    $|=1;
+
+    my ($response);
+    do {
+        my $game = Games::Domino->new({ debug => 1 });
+        do { $game->play; $game->show; } until $game->is_over;
+        $game->result;
+
+        print {*STDOUT} "Do you wish to continue playing Domino with computer (Y/N)? ";
+        $response = <STDIN>;
+        chomp($response);
+
+        while (defined($response) && ($response !~ /Y|N/i)) {
+            print {*STDOUT} "Invalid response, please enter (Y/N). ";
+            $response = <STDIN>;
+            chomp($response);
+        }
+    } while (defined($response) && ($response =~ /Y/i));
+
+    print {*STDOUT} "\nThank you.\n";
 
 =cut
 
@@ -99,8 +129,8 @@ game is over.
     use strict; use warnings;
     use Games::Domino;
 
-    my $domino = Games::Domino->new();
-    $domino->play;
+    my $game = Games::Domino->new();
+    $game->play;
 
 =cut
 
@@ -159,8 +189,8 @@ over in the following circumstances:
     use strict; use warnings;
     use Games::Domino;
 
-    my $domino = Games::Domino->new();
-    do { $domino->play; } until $domino->is_over;
+    my $game = Games::Domino->new();
+    do { $game->play; } until $game->is_over;
 
 =cut
 
@@ -182,9 +212,9 @@ Declares who is the winner against whom and by how much margin.
     use strict; use warnings;
     use Games::Domino;
 
-    my $domino = Games::Domino->new();
-    do { $domino->play; } until $domino->is_over;
-    $domino->result;
+    my $game = Games::Domino->new();
+    do { $game->play; } until $game->is_over;
+    $game->result;
 
 =cut
 
@@ -219,8 +249,8 @@ Print the current tiles of Computer, Human and matched one.
     use strict; use warnings;
     use Games::Domino;
 
-    my $domino = Games::Domino->new();
-    do { $domino->play; $domino->show; } until $domino->is_over;
+    my $game = Games::Domino->new();
+    do { $game->play; $game->show; } until $game->is_over;
 
 =cut
 
@@ -241,9 +271,9 @@ Returns all the unused tiles remained in the bank.
     use strict; use warnings;
     use Games::Domino;
 
-    my $domino = Games::Domino->new();
-    do { $domino->play; } until $domino->is_over;
-    print "DOMINO : $domino\n\n";
+    my $game = Games::Domino->new();
+    do { $game->play; } until $game->is_over;
+    print "DOMINO : $game\n\n";
 
 =cut
 
