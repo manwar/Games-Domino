@@ -1,6 +1,6 @@
 package Games::Domino;
 
-$Games::Domino::VERSION   = '0.09';
+$Games::Domino::VERSION   = '0.10';
 $Games::Domino::AUTHORITY = 'cpan:MANWAR';
 
 =head1 NAME
@@ -9,7 +9,7 @@ Games::Domino - Interface to the Domino game.
 
 =head1 VERSION
 
-Version 0.09
+Version 0.10
 
 =cut
 
@@ -67,9 +67,9 @@ shuffle to start the the game.
 
 =head1 SYNOPSIS
 
-Below is working code for the Domino game using the L<Games::Domino> package. The
-script is supplied with the distribution and can be download
-<here|https://raw.githubusercontent.com/Manwar/Games-Domino/master/script/play-domino.pl>
+Below is the working code for the Domino game using the L<Games::Domino> package.
+The script is supplied with the distribution and can be downloaded
+L<here|https://raw.githubusercontent.com/Manwar/Games-Domino/master/script/play-domino.pl>
 
     use strict; use warnings;
     use Games::Domino;
