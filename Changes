@@ -1,5 +1,9 @@
 Revision history for Games-Domino
 
+0.11    Mon Mar 23 12:50:00 2015
+        - Updated Makefile.PL script to install the game script alongwith the package.
+        - Updated pod document about the same.
+
 0.10    Thu Feb 19 15:50:50 2015
         - Fixed the typo in the pod document of Games::Domino.
 

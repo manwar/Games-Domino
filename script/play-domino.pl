@@ -1,5 +1,8 @@
 #!perl
 
+# Domino game script supplied by Games::Domino v0.11
+# Author: Mohammad S Anwar (mohammad.anwar at yahoo.com)
+
 use strict; use warnings;
 use Games::Domino;
 
@@ -13,12 +16,12 @@ do {
 
     print {*STDOUT} "Do you wish to continue playing Domino with computer (Y/N)? ";
     $response = <STDIN>;
-    chomp($response);
+    $response =~ s/[\f\n\r]*$//g;
 
     while (defined($response) && ($response !~ /Y|N/i)) {
         print {*STDOUT} "Invalid response, please enter (Y/N). ";
         $response = <STDIN>;
-        chomp($response);
+        $response =~ s/[\f\n\r]*$//g;
     }
 
 } while (defined($response) && ($response =~ /Y/i));

@@ -1,6 +1,6 @@
 package Games::Domino;
 
-$Games::Domino::VERSION   = '0.10';
+$Games::Domino::VERSION   = '0.11';
 $Games::Domino::AUTHORITY = 'cpan:MANWAR';
 
 =head1 NAME
@@ -9,7 +9,7 @@ Games::Domino - Interface to the Domino game.
 
 =head1 VERSION
 
-Version 0.10
+Version 0.11
 
 =cut
 
@@ -68,8 +68,8 @@ shuffle to start the the game.
 =head1 SYNOPSIS
 
 Below is the working code for the Domino game using the L<Games::Domino> package.
-The script is supplied with the distribution and can be downloaded
-L<here|https://raw.githubusercontent.com/Manwar/Games-Domino/master/script/play-domino.pl>
+The game script 'play-domino.pl' is supplied with the distribution and on install
+, is available to play with.
 
     use strict; use warnings;
     use Games::Domino;
@@ -84,16 +84,20 @@ L<here|https://raw.githubusercontent.com/Manwar/Games-Domino/master/script/play-
 
         print {*STDOUT} "Do you wish to continue playing Domino with computer (Y/N)? ";
         $response = <STDIN>;
-        chomp($response);
+        $response =~ s/[\f\r\n]*$//g;
 
         while (defined($response) && ($response !~ /Y|N/i)) {
             print {*STDOUT} "Invalid response, please enter (Y/N). ";
             $response = <STDIN>;
-            chomp($response);
+            $response =~ s/[\f\r\n]*$//g;
         }
     } while (defined($response) && ($response =~ /Y/i));
 
     print {*STDOUT} "\nThank you.\n";
+
+Once it is installed, it can be played on a terminal/command window  as below:
+
+    $ play-domino.pl
 
 =cut
 
@@ -154,7 +158,9 @@ sub play {
         do {
             print {*STDOUT} "Pick your tile [" . $player->_available_indexes . "] or [B]? ";
             $index = <STDIN>;
-            chomp($index) if defined $index;
+            if (defined $index) {
+                $index =~ s/[\f\r\n]*$//g;
+            }
 
             if (defined($index) && ($index =~ /B/i)) {
                 my $tile = $self->_play($player->name);
@@ -521,8 +527,8 @@ L<http://search.cpan.org/dist/Games-Domino/>
 
 Copyright 2012 - 2015 Mohammad S Anwar.
 
-This  program  is  free software; you can redistribute it and/or modify it under
-the  terms  of the the Artistic License (2.0). You may obtain a copy of the full
+This program  is  free software; you can redistribute it and / or modify it under
+the  terms  of the the Artistic License (2.0). You may obtain a  copy of the full
 license at:
 
 L<http://www.perlfoundation.org/artistic_license_2_0>
