@@ -1,5 +1,11 @@
 Revision history for Games-Domino
 
+0.12    Wed May 13 11:00:00 2015
+        - Fine-tuned the flow of the game.
+        - Improved method is_over() slightly.
+        - Renamed the script play-domino.
+        - Updated pod document to reflect the above changes.
+
 0.11    Mon Mar 23 12:50:00 2015
         - Updated Makefile.PL script to install the game script alongwith the package.
         - Updated pod document about the same.

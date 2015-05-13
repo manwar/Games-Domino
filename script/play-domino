@@ -1,0 +1,29 @@
+#!perl
+
+# Domino game script supplied by Games::Domino v0.12
+# Author: Mohammad S Anwar (mohammad.anwar at yahoo.com)
+
+use strict; use warnings;
+use Games::Domino;
+
+$|=1;
+
+my ($response);
+do {
+    my $game = Games::Domino->new({ debug => 1 });
+    do {
+        $game->play;
+        $game->show;
+    } until ($game->is_over);
+
+    $game->result;
+
+    do {
+        print {*STDOUT} "Do you wish to continue (Y/N)? ";
+        $response = <STDIN>;
+        chomp($response);
+    } until (defined $response && ($response =~ /^[Y|N]$/i));
+
+} until ($response =~ /^N$/i);
+
+print {*STDOUT} "\nThank you.\n";

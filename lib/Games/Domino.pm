@@ -1,6 +1,6 @@
 package Games::Domino;
 
-$Games::Domino::VERSION   = '0.11';
+$Games::Domino::VERSION   = '0.12';
 $Games::Domino::AUTHORITY = 'cpan:MANWAR';
 
 =head1 NAME
@@ -9,7 +9,7 @@ Games::Domino - Interface to the Domino game.
 
 =head1 VERSION
 
-Version 0.11
+Version 0.12
 
 =cut
 
@@ -68,8 +68,8 @@ shuffle to start the the game.
 =head1 SYNOPSIS
 
 Below is the working code for the Domino game using the L<Games::Domino> package.
-The game script 'play-domino.pl' is supplied with the distribution and on install
-, is available to play with.
+The game script C<play-domino> is supplied with the distribution and  on install,
+is available to play with.
 
     use strict; use warnings;
     use Games::Domino;
@@ -79,25 +79,26 @@ The game script 'play-domino.pl' is supplied with the distribution and on instal
     my ($response);
     do {
         my $game = Games::Domino->new({ debug => 1 });
-        do { $game->play; $game->show; } until $game->is_over;
+        do {
+            $game->play;
+            $game->show;
+        } until ($game->is_over);
+
         $game->result;
 
-        print {*STDOUT} "Do you wish to continue playing Domino with computer (Y/N)? ";
-        $response = <STDIN>;
-        $response =~ s/[\f\r\n]*$//g;
-
-        while (defined($response) && ($response !~ /Y|N/i)) {
-            print {*STDOUT} "Invalid response, please enter (Y/N). ";
+        do {
+            print {*STDOUT} "Do you wish to continue (Y/N)? ";
             $response = <STDIN>;
-            $response =~ s/[\f\r\n]*$//g;
-        }
-    } while (defined($response) && ($response =~ /Y/i));
+            chomp($response);
+        } until (defined $response && ($response =~ /^[Y|N]$/i));
+
+    } until ($response =~ /^N$/i);
 
     print {*STDOUT} "\nThank you.\n";
 
 Once it is installed, it can be played on a terminal/command window  as below:
 
-    $ play-domino.pl
+    $ play-domino
 
 =cut
 
@@ -203,12 +204,11 @@ over in the following circumstances:
 sub is_over {
     my ($self) = @_;
 
-    return 1 if ((scalar(@{$self->{stock}}) == 2)
-                 ||
-                 (scalar(@{$self->{human}->{bank}}) == 0)
-                 ||
-                 (scalar(@{$self->{computer}->{bank}}) == 0));
-    return 0;
+    return ((scalar(@{$self->{stock}}) == 2)
+            ||
+            (scalar(@{$self->{human}->{bank}}) == 0)
+            ||
+            (scalar(@{$self->{computer}->{bank}}) == 0));
 }
 
 =head2 result()

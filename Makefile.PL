@@ -10,7 +10,7 @@ WriteMakefile(
     VERSION_FROM       => 'lib/Games/Domino.pm',
     ABSTRACT_FROM      => 'lib/Games/Domino.pm',
     LICENSE            => 'artistic_2',
-    EXE_FILES          => [ 'script/play-domino.pl' ],
+    EXE_FILES          => [ 'script/play-domino' ],
     PL_FILES           => {},
     MIN_PERL_VERSION   => 5.006,
     CONFIGURE_REQUIRES => {

@@ -3,7 +3,7 @@ lib/Games/Domino.pm
 lib/Games/Domino/Player.pm
 lib/Games/Domino/Tile.pm
 lib/Games/Domino/Params.pm
-script/play-domino.pl
+script/play-domino
 Makefile.PL
 LICENSE
 MANIFEST
