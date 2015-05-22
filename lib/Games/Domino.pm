@@ -1,6 +1,6 @@
 package Games::Domino;
 
-$Games::Domino::VERSION   = '0.12';
+$Games::Domino::VERSION   = '0.13';
 $Games::Domino::AUTHORITY = 'cpan:MANWAR';
 
 =head1 NAME
@@ -9,7 +9,7 @@ Games::Domino - Interface to the Domino game.
 
 =head1 VERSION
 
-Version 0.12
+Version 0.13
 
 =cut
 
@@ -24,13 +24,6 @@ use Moo;
 use namespace::clean;
 
 use overload ('""' => \&as_string);
-
-select(STDOUT);
-$|=1;
-
-$SIG{'INT'} = sub {
-    print {*STDOUT} "\n\nCaught Interrupt (^C), Aborting the game.\n"; exit(1);
-};
 
 has 'stock'    => (is => 'rw');
 has 'board'    => (is => 'rw');
@@ -74,17 +67,25 @@ is available to play with.
     use strict; use warnings;
     use Games::Domino;
 
+    select(STDOUT);
     $|=1;
+
+    $SIG{'INT'} = sub {
+        print {*STDOUT} "\n\nCaught Interrupt (^C), Aborting the game.\n"; exit(1);
+    };
+
+    my $game = Games::Domino->new({ debug => 1 });
 
     my ($response);
     do {
-        my $game = Games::Domino->new({ debug => 1 });
+        $game->show;
         do {
             $game->play;
             $game->show;
         } until ($game->is_over);
 
         $game->result;
+        $game->reset;
 
         do {
             print {*STDOUT} "Do you wish to continue (Y/N)? ";
@@ -105,9 +106,7 @@ Once it is installed, it can be played on a terminal/command window  as below:
 sub BUILD {
     my ($self) = @_;
 
-    $self->{stock} = $self->_prepare();
     $self->{human} = Games::Domino::Player->new({ name => 'H', show => 1 });
-
     if ($self->cheat) {
         $self->{computer} = Games::Domino::Player->new({ name => 'C', show => 1 });
     }
@@ -115,12 +114,8 @@ sub BUILD {
         $self->{computer} = Games::Domino::Player->new({ name => 'C' });
     }
 
-    $self->{human}->save(shift @{$self->{stock}})    for (1..7);
-    $self->{computer}->save(shift @{$self->{stock}}) for (1..7);
-    $self->{current} = $self->{computer};
-
+    $self->_init;
     $self->_instructions;
-    $self->show if $self->debug;
 }
 
 =head1 METHODS
@@ -130,12 +125,6 @@ sub BUILD {
 Pick a tile from the current player. If no matching tile found then picks it from
 the stock until it found  one or the stock has only 2 tiles left at that time the
 game is over.
-
-    use strict; use warnings;
-    use Games::Domino;
-
-    my $game = Games::Domino->new();
-    $game->play;
 
 =cut
 
@@ -193,12 +182,6 @@ over in the following circumstances:
 
 =back
 
-    use strict; use warnings;
-    use Games::Domino;
-
-    my $game = Games::Domino->new();
-    do { $game->play; } until $game->is_over;
-
 =cut
 
 sub is_over {
@@ -214,13 +197,6 @@ sub is_over {
 =head2 result()
 
 Declares who is the winner against whom and by how much margin.
-
-    use strict; use warnings;
-    use Games::Domino;
-
-    my $game = Games::Domino->new();
-    do { $game->play; } until $game->is_over;
-    $game->result;
 
 =cut
 
@@ -252,12 +228,6 @@ sub result {
 
 Print the current tiles of Computer, Human and matched one.
 
-    use strict; use warnings;
-    use Games::Domino;
-
-    my $game = Games::Domino->new();
-    do { $game->play; $game->show; } until $game->is_over;
-
 =cut
 
 sub show {
@@ -270,16 +240,23 @@ sub show {
     $self->_line;
 }
 
+=head2 reset()
+
+Reset the game.
+
+=cut
+
+sub reset {
+    my ($self) = @_;
+
+    $self->human->reset;
+    $self->computer->reset;
+    $self->_init;
+}
+
 =head2 as_string()
 
 Returns all the unused tiles remained in the bank.
-
-    use strict; use warnings;
-    use Games::Domino;
-
-    my $game = Games::Domino->new();
-    do { $game->play; } until $game->is_over;
-    print "DOMINO : $game\n\n";
 
 =cut
 
@@ -441,6 +418,16 @@ sub _line {
     my ($self) = @_;
 
     print {*STDOUT} "="x76,"\n";
+}
+
+sub _init {
+    my ($self) = @_;
+
+    $self->{stock} = $self->_prepare();
+    $self->{board} = [];
+    $self->{human}->save($self->_pick)    for (1..7);
+    $self->{computer}->save($self->_pick) for (1..7);
+    $self->{current} = $self->{human};
 }
 
 sub _pick {

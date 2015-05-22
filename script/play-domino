@@ -6,17 +6,25 @@
 use strict; use warnings;
 use Games::Domino;
 
+select(STDOUT);
 $|=1;
+
+$SIG{'INT'} = sub {
+    print {*STDOUT} "\n\nCaught Interrupt (^C), Aborting the game.\n"; exit(1);
+};
+
+my $game = Games::Domino->new({ debug => 1 });
 
 my ($response);
 do {
-    my $game = Games::Domino->new({ debug => 1 });
+    $game->show;
     do {
         $game->play;
         $game->show;
     } until ($game->is_over);
 
     $game->result;
+    $game->reset;
 
     do {
         print {*STDOUT} "Do you wish to continue (Y/N)? ";

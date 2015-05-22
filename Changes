@@ -1,5 +1,11 @@
 Revision history for Games-Domino
 
+0.13    Fri May 22 09:55:00 2015
+        - Added method reset() to the package Games::Domino.
+        - Added method reset() to the package Games::Domino::Player.
+        - Updated game script to allow replay the game in the same session.
+        - Tidied up pod document of the methods in the package Games::Domino.
+
 0.12    Wed May 13 11:00:00 2015
         - Fine-tuned the flow of the game.
         - Improved method is_over() slightly.

@@ -1,6 +1,6 @@
 package Games::Domino::Player;
 
-$Games::Domino::Player::VERSION   = '0.12';
+$Games::Domino::Player::VERSION   = '0.13';
 $Games::Domino::Player::AUTHORITY = 'cpan:MANWAR';
 
 =head1 NAME
@@ -9,7 +9,7 @@ Games::Domino::Player - Represents the player of the Domino game.
 
 =head1 VERSION
 
-Version 0.12
+Version 0.13
 
 =cut
 
@@ -52,6 +52,17 @@ sub save {
     die("ERROR: Undefined tile found.\n") unless defined $tile;
 
     push @{$self->{bank}}, $tile;
+}
+
+=head2 reset()
+
+=cut
+
+sub reset {
+    my ($self) = @_;
+
+    $self->{bank}  = [];
+    $self->{score} = 0;
 }
 
 =head2 value()
