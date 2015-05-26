@@ -1,5 +1,14 @@
 Revision history for Games-Domino
 
+0.14    Tue May 26 14:50:00 2015
+        - Updated method play() and extracted out prompting for data.
+        - Added method is_valid_tile()
+        - Updated method _play() w.r.t above changes.
+        - Added method _pick_from_bank()
+        - Refactored method is_over()
+        - Refactored method _next()
+        - Updated game script w.r.t the above changes.
+
 0.13    Fri May 22 09:55:00 2015
         - Added method reset() to the package Games::Domino.
         - Added method reset() to the package Games::Domino::Player.

@@ -19,8 +19,17 @@ my ($response);
 do {
     $game->show;
     do {
-        $game->play;
+        my ($index);
+        do {
+            print {*STDOUT} "Pick your tile [" . $game->current->_available_indexes . "] or [B]? ";
+            $index = <STDIN>;
+            chomp $index;
+
+        } until (defined $index && (($index =~ /^B$/i) || $game->is_valid_tile($index)));
+
+        $game->play($index);
         $game->show;
+
     } until ($game->is_over);
 
     $game->result;

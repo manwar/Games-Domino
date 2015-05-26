@@ -1,6 +1,6 @@
 package Games::Domino;
 
-$Games::Domino::VERSION   = '0.13';
+$Games::Domino::VERSION   = '0.14';
 $Games::Domino::AUTHORITY = 'cpan:MANWAR';
 
 =head1 NAME
@@ -9,7 +9,7 @@ Games::Domino - Interface to the Domino game.
 
 =head1 VERSION
 
-Version 0.13
+Version 0.14
 
 =cut
 
@@ -32,8 +32,8 @@ has 'computer' => (is => 'rw');
 has 'current'  => (is => 'rw');
 has 'board_l'  => (is => 'rw', isa => $ZeroToSix);
 has 'board_r'  => (is => 'rw', isa => $ZeroToSix);
-has 'cheat'    => (is => 'ro', isa => $ZeroOrOne, default => sub { return 0 });
-has 'debug'    => (is => 'rw', isa => $ZeroOrOne, default => sub { return 0 });
+has 'cheat'    => (is => 'ro', isa => $ZeroOrOne, default => sub { 0 });
+has 'debug'    => (is => 'rw', isa => $ZeroOrOne, default => sub { 0 });
 
 =head1 DESCRIPTION
 
@@ -52,11 +52,6 @@ shuffle to start the the game.
     [0 | 4] [1 | 4] [2 | 4] [3 | 4] [4 | 4]
     [0 | 5] [1 | 5] [2 | 5] [3 | 5] [4 | 5] [5 | 5]
     [0 | 6] [1 | 6] [2 | 6] [3 | 6] [4 | 6] [5 | 6] [6 | 6]
-
-    use strict; use warnings;
-    use Games::Domino;
-
-    my $game = Games::Domino->new();
 
 =head1 SYNOPSIS
 
@@ -129,44 +124,24 @@ game is over.
 =cut
 
 sub play {
-    my ($self) = @_;
+    my ($self, $index) = @_;
 
-    my $player = $self->{current};
-    if ($player->name eq 'C') {
-        my $tile = $player->pick($self->board_l, $self->board_r);
-        if (defined $tile) {
-            print {*STDOUT} "[C] [P]: $tile [S]\n" if $self->debug;
-            $self->_save($tile);
-            return $tile;
-        }
+    $self->_play($index);
+    $self->_play;
+}
 
-        $tile = $self->_play($player->name);
-        return $tile if defined $tile;
-    }
-    else {
-        my $index;
-        do {
-            print {*STDOUT} "Pick your tile [" . $player->_available_indexes . "] or [B]? ";
-            $index = <STDIN>;
-            if (defined $index) {
-                $index =~ s/[\f\r\n]*$//g;
-            }
+=head2 is_valid_tile($index)
 
-            if (defined($index) && ($index =~ /B/i)) {
-                my $tile = $self->_play($player->name);
-                return $tile if defined $tile;
-            }
-        } until (defined($index)
-                 && $player->_validate_index($index)
-                 && $player->_validate_tile($index, $self->board_l, $self->board_r));
+Return 1/0 depending on whether the tile at the given C<$index> is valid or not.
 
-        my $tile = $player->_tile($index);
-        print {*STDOUT} "[H] [P]: $tile [S]\n" if $self->debug;
-        splice(@{$player->{bank}}, $index-1, 1);
-        $self->_save($tile);
+=cut
 
-        return $tile;
-    }
+sub is_valid_tile {
+    my ($self, $index) = @_;
+
+    return (defined($index)
+            && $self->current->_validate_index($index)
+            && $self->current->_validate_tile($index, $self->board_l, $self->board_r));
 }
 
 =head2 is_over()
@@ -204,8 +179,8 @@ sub result {
     my ($self) = @_;
 
     print {*STDOUT} "STOCK : ", $self->as_string, "\n";
-    my $h = $self->{human}->value();
-    my $c = $self->{computer}->value();
+    my $h = $self->human->value;
+    my $c = $self->computer->value;
     if ($h == $c) {
         if (scalar(@{$self->{computer}->{bank}}) < scalar(@{$self->{human}->{bank}})) {
             print {*STDOUT} "WINNER: [C] [$c] against [H] [$h]\n";
@@ -236,7 +211,7 @@ sub show {
     $self->_line;
     print {*STDOUT} "[C]: " . $self->computer . "\n";
     print {*STDOUT} "[H]: " . $self->human    . "\n";
-    print {*STDOUT} "[G]: " . $self->_board() . "\n";
+    print {*STDOUT} "[G]: " . $self->_board   . "\n";
     $self->_line;
 }
 
@@ -332,10 +307,38 @@ matching on board.
 }
 
 sub _play {
-    my ($self) = @_;
+    my ($self, $index) = @_;
 
-    my $player = $self->{current};
+    my $player = $self->current;
     my $name   = $player->name;
+
+    if (defined $index) {
+        if ($index =~ /^B$/i) {
+            $self->_pick_from_bank($player);
+        }
+        else {
+            my $tile = $player->_tile($index);
+            print {*STDOUT} "[H] [P]: $tile [S]\n" if $self->debug;
+            splice(@{$player->{bank}}, $index-1, 1);
+            $self->_save($tile);
+        }
+    }
+    else {
+        my $tile = $player->pick($self->board_l, $self->board_r);
+        if (defined $tile) {
+            print {*STDOUT} "[C] [P]: $tile [S]\n" if $self->debug;
+            $self->_save($tile);
+        }
+        else {
+            $self->_pick_from_bank($player);
+        }
+    }
+}
+
+sub _pick_from_bank {
+    my ($self, $player) = @_;
+
+    my $name = $player->name;
     while (scalar(@{$self->{stock}}) > 2) {
         my $_tile = $self->_pick();
         $player->save($_tile);
@@ -343,7 +346,7 @@ sub _play {
         if (defined $tile) {
             print {*STDOUT} "[$name] [B]: $tile [S]\n" if $self->debug;
             $self->_save($tile);
-            return $tile;
+            last;
         }
         else {
             print {*STDOUT} "[$name] [B]: $_tile [F]\n" if $self->debug;
@@ -459,11 +462,11 @@ sub _prepare {
 sub _next {
     my ($self) = @_;
 
-    if ($self->{current}->name eq 'H') {
-        $self->{current} = $self->{computer};
+    if ($self->current->name eq 'H') {
+        $self->current($self->computer);
     }
     else {
-        $self->{current} = $self->{human};
+        $self->current($self->human);
     }
 }
 
