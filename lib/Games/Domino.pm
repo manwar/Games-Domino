@@ -1,6 +1,6 @@
 package Games::Domino;
 
-$Games::Domino::VERSION   = '0.14';
+$Games::Domino::VERSION   = '0.15';
 $Games::Domino::AUTHORITY = 'cpan:MANWAR';
 
 =head1 NAME
@@ -9,7 +9,7 @@ Games::Domino - Interface to the Domino game.
 
 =head1 VERSION
 
-Version 0.14
+Version 0.15
 
 =cut
 
@@ -75,7 +75,14 @@ is available to play with.
     do {
         $game->show;
         do {
-            $game->play;
+            my ($index);
+            do {
+                print {*STDOUT} "Pick your tile [" . $game->get_available_tiles . "] or [B]? ";
+                $index = <STDIN>;
+                chomp $index;
+            } until ($game->is_valid_tile($index));
+
+            $game->play($index);
             $game->show;
         } until ($game->is_over);
 
@@ -130,6 +137,18 @@ sub play {
     $self->_play;
 }
 
+=head2 get_available_tiles()
+
+Returns all available tile's index.
+
+=cut
+
+sub get_available_tiles {
+    my ($self) = @_;
+
+    return $self->current->_available_indexes;
+}
+
 =head2 is_valid_tile($index)
 
 Return 1/0 depending on whether the tile at the given C<$index> is valid or not.
@@ -140,8 +159,11 @@ sub is_valid_tile {
     my ($self, $index) = @_;
 
     return (defined($index)
-            && $self->current->_validate_index($index)
-            && $self->current->_validate_tile($index, $self->board_l, $self->board_r));
+            && (($index =~ /^B$/i)
+                ||
+                ($self->current->_validate_index($index)
+                 && $self->current->_validate_tile($index, $self->board_l, $self->board_r))
+               ));
 }
 
 =head2 is_over()

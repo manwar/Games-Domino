@@ -1,5 +1,11 @@
 Revision history for Games-Domino
 
+0.15    Wed May 27 09:50:00 2015
+        - Added method get_available_tiles()
+        - Updated method is_valid_tile()
+        - Updated game script w.r.t the above addition.
+        - Updated code in the section "SYNOPSIS".
+
 0.14    Tue May 26 14:50:00 2015
         - Updated method play() and extracted out prompting for data.
         - Added method is_valid_tile()
