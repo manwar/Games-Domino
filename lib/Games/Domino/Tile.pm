@@ -1,6 +1,6 @@
 package Games::Domino::Tile;
 
-$Games::Domino::Tile::VERSION   = '0.13';
+$Games::Domino::Tile::VERSION   = '0.16';
 $Games::Domino::Tile::AUTHORITY = 'cpan:MANWAR';
 
 =head1 NAME
@@ -9,7 +9,7 @@ Games::Domino::Tile - Represents the tile of the Domino game.
 
 =head1 VERSION
 
-Version 0.13
+Version 0.16
 
 =cut
 

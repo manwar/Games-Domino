@@ -1,5 +1,8 @@
 Revision history for Games-Domino
 
+0.16    Fri May 29 10:20:00 2015
+        - Fixed the failed Kwalitee Core metric 'consistent version'.
+
 0.15    Wed May 27 09:50:00 2015
         - Added method get_available_tiles()
         - Updated method is_valid_tile()
