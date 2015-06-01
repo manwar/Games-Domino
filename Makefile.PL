@@ -16,14 +16,15 @@ WriteMakefile(
     CONFIGURE_REQUIRES => {
         'ExtUtils::MakeMaker' => 0,
     },
-    BUILD_REQUIRES => {
+    BUILD_REQUIRES   => {
         'Test::More' => 0,
     },
     PREREQ_PM => {
-        'Attribute::Memoize' => 1.01,
-        'List::Util'         => 1.19,
-        'Moo'                => 0,
-        'namespace::clean'   => 0,
+        'Attribute::Memoize'      => '1.01',
+        'List::Util'              => '1.19',
+        'Term::ANSIColor::Markup' => '0.06',
+        'Moo'                     => 0,
+        'namespace::clean'        => 0,
     },
     dist  => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean => { FILES => 'Games-Domino-*' },

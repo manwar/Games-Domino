@@ -1,5 +1,11 @@
 Revision history for Games-Domino
 
+0.17    Mon Jun 01 13:35:00 2015
+        - Added dependency on Term::ANSIColor::Markup in the Makefile.PL script.
+        - Added new attribute 'color' to the class Games::Domino::Tile.
+        - Updated method _play() to mark with color code who picked the tile.
+        - Updated method _board() to return color coded board.
+
 0.16    Fri May 29 10:20:00 2015
         - Fixed the failed Kwalitee Core metric 'consistent version'.
 

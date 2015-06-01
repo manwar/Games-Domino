@@ -1,6 +1,6 @@
 package Games::Domino;
 
-$Games::Domino::VERSION   = '0.16';
+$Games::Domino::VERSION   = '0.17';
 $Games::Domino::AUTHORITY = 'cpan:MANWAR';
 
 =head1 NAME
@@ -9,13 +9,15 @@ Games::Domino - Interface to the Domino game.
 
 =head1 VERSION
 
-Version 0.16
+Version 0.17
 
 =cut
 
 use 5.006;
 use Data::Dumper;
 use List::Util qw(shuffle);
+use Term::ANSIColor::Markup;
+
 use Games::Domino::Tile;
 use Games::Domino::Player;
 use Games::Domino::Params qw($ZeroOrOne $ZeroToSix);
@@ -34,6 +36,7 @@ has 'board_l'  => (is => 'rw', isa => $ZeroToSix);
 has 'board_r'  => (is => 'rw', isa => $ZeroToSix);
 has 'cheat'    => (is => 'ro', isa => $ZeroOrOne, default => sub { 0 });
 has 'debug'    => (is => 'rw', isa => $ZeroOrOne, default => sub { 0 });
+has 'action'   => (is => 'rw', default => sub { [] });
 
 =head1 DESCRIPTION
 
@@ -276,58 +279,6 @@ sub as_string {
 #
 # PRIVATE METHODS
 
-sub _instructions {
-    my ($self) = @_;
-
-    my $help = qq {
-   _____                                 _____                     _
-  / ____|                            _ _|  __ \\                  (_)
- | |  __  __ _ _ __ ___    ___  __ _(_|_) |  | |  ___  _ __ ___  _ _ __   ___
- | | |_ |/ _` | '_ ` _ \\ / _ \\/ __|   | |  | | / _ \\| '_  ` _ \\| | ' \\ / \\
- | |__| | (_| | | | | | |  __/\\__ \\_ _| |__| | (_) | | | | | | | | | | (_)  \|
-  \\_____|\\__,_|_| |_| |_|\\___||___(_|_)_____/ \\___/|_| |_| |_|_|_| |_|\\___/
-
-Tiles are numbered left to right starting with 1. Symbols used in this game are:
-    [C]: Code for the computer player
-    [H]: Code for the human player
-    [P]: Personal tile
-    [B]: Tile picked from the bank
-    [S]: Successfully found the matching tile
-    [F]: Unable to find the matching tile
-    [G]: All matched tiles so far
-
-Example:
-
-[C] [P]: [5 | 6] [S]
-Computer picked the tile [5 | 6] from   his own collection and successfully found
-the matching on board.
-
-[H] [P]: [6 | 6] [S]
-Human picked the tile [6 | 6] from his own collection and successfully found  the
-matching on board.
-
-[C] [B]: [2 | 6] [S]
-Computer randomly picked the tile [2 | 6] from the bank and successfully found the
-matching on board.
-
-[C] [B]: [3 | 4] [F]
-Computer randomly picked the tile [3 | 4] from the bank and but failed to find the
-matching on board.
-
-[H] [B]: [2 | 2] [S]
-Human randomly picked the tile [2 | 2] from the bank and successfully  found  the
-matching on board.
-
-[H] [B]: [3 | 6] [F]
-Human randomly picked the tile [3 | 6] from the bank and but failed to  find  the
-matching on board.
-};
-
-    $self->_line;
-    print {*STDOUT} $help,"\n";
-    $self->_line;
-}
-
 sub _play {
     my ($self, $index) = @_;
 
@@ -383,6 +334,7 @@ sub _save {
         push @{$self->{board}}, $tile;
         $self->{board_l} = $tile->left;
         $self->{board_r} = $tile->right;
+        $self->_action($tile);
         $self->_next;
         return;
     }
@@ -390,6 +342,7 @@ sub _save {
     if ($self->{board_r} == $tile->left) {
         push @{$self->{board}}, $tile;
         $self->{board_r} = $tile->right;
+        $self->_action($tile);
         $self->_next;
         return;
 
@@ -401,6 +354,7 @@ sub _save {
         $tile->left($R);
         push @{$self->{board}}, $tile;
         $self->{board_r} = $L;
+        $self->_action($tile);
         $self->_next;
         return;
     }
@@ -412,13 +366,14 @@ sub _save {
         $tile->left($R);
         unshift @{$self->{board}}, $tile;
         $self->{board_l} = $R;
+        $self->_action($tile);
         $self->_next;
         return;
-
     }
     elsif ($self->{board_l} == $tile->right) {
         unshift @{$self->{board}}, $tile;
         $self->{board_l} = $tile->left;
+        $self->_action($tile);
         $self->_next;
         return;
     }
@@ -426,17 +381,46 @@ sub _save {
     return;
 }
 
+sub _action {
+    my ($self, $tile) = @_;
+
+    if (defined $self->{action} && scalar(@{$self->{action}}) == 2) {
+        foreach (@{$self->board}) {
+            $_->color('blue');
+        }
+        $self->{action} = [ $tile ];
+    }
+    else {
+        push @{$self->{action}}, $tile;
+    }
+
+    if ($self->current->name eq 'H') {
+        $tile->color('green');
+    }
+    else {
+        $tile->color('red');
+    }
+}
+
 sub _board {
     my ($self) = @_;
 
     my $board = '';
-    foreach (@{$self->{board}}) {
-        $board .= sprintf("%s==", $_);
+    foreach (@{$self->board}) {
+        if ($_->color eq 'green') {
+            $board .= sprintf("<green><bold>%s</bold></green>==", $_);
+        }
+        elsif ($_->color eq 'red') {
+            $board .= sprintf("<red><bold>%s</bold></red>==", $_);
+        }
+        else {
+            $board .= sprintf("<blue><bold>%s</bold></blue>==", $_);
+        }
     }
 
     $board =~ s/[\=]+\s?$//;
     $board =~ s/\s+$//;
-    return $board;
+    return Term::ANSIColor::Markup->colorize($board);
 }
 
 sub _line {
@@ -490,6 +474,58 @@ sub _next {
     else {
         $self->current($self->human);
     }
+}
+
+sub _instructions {
+    my ($self) = @_;
+
+    my $help = qq {
+   _____                                 _____                     _
+  / ____|                            _ _|  __ \\                  (_)
+ | |  __  __ _ _ __ ___    ___  __ _(_|_) |  | |  ___  _ __ ___  _ _ __   ___
+ | | |_ |/ _` | '_ ` _ \\ / _ \\/ __|   | |  | | / _ \\| '_  ` _ \\| | ' \\ / \\
+ | |__| | (_| | | | | | |  __/\\__ \\_ _| |__| | (_) | | | | | | | | | | (_)  \|
+  \\_____|\\__,_|_| |_| |_|\\___||___(_|_)_____/ \\___/|_| |_| |_|_|_| |_|\\___/
+
+Tiles are numbered left to right starting with 1. Symbols used in this game are:
+    [C]: Code for the computer player
+    [H]: Code for the human player
+    [P]: Personal tile
+    [B]: Tile picked from the bank
+    [S]: Successfully found the matching tile
+    [F]: Unable to find the matching tile
+    [G]: All matched tiles so far
+
+Example:
+
+[C] [P]: [5 | 6] [S]
+Computer picked the tile [5 | 6] from   his own collection and successfully found
+the matching on board.
+
+[H] [P]: [6 | 6] [S]
+Human picked the tile [6 | 6] from his own collection and successfully found  the
+matching on board.
+
+[C] [B]: [2 | 6] [S]
+Computer randomly picked the tile [2 | 6] from the bank and successfully found the
+matching on board.
+
+[C] [B]: [3 | 4] [F]
+Computer randomly picked the tile [3 | 4] from the bank and but failed to find the
+matching on board.
+
+[H] [B]: [2 | 2] [S]
+Human randomly picked the tile [2 | 2] from the bank and successfully  found  the
+matching on board.
+
+[H] [B]: [3 | 6] [F]
+Human randomly picked the tile [3 | 6] from the bank and but failed to  find  the
+matching on board.
+};
+
+    $self->_line;
+    print {*STDOUT} $help,"\n";
+    $self->_line;
 }
 
 =head1 AUTHOR

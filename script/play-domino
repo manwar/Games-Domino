@@ -1,6 +1,6 @@
 #!perl
 
-# Domino game script supplied by Games::Domino v0.12
+# Domino game script supplied by Games::Domino v0.17
 # Author: Mohammad S Anwar (mohammad.anwar at yahoo.com)
 
 use strict; use warnings;
@@ -13,7 +13,7 @@ $SIG{'INT'} = sub {
     print {*STDOUT} "\n\nCaught Interrupt (^C), Aborting the game.\n"; exit(1);
 };
 
-my $game = Games::Domino->new({ debug => 1 });
+my $game = Games::Domino->new;
 
 my ($response);
 do {
