@@ -1,6 +1,6 @@
 package Games::Domino;
 
-$Games::Domino::VERSION   = '0.17';
+$Games::Domino::VERSION   = '0.18';
 $Games::Domino::AUTHORITY = 'cpan:MANWAR';
 
 =head1 NAME
@@ -9,7 +9,7 @@ Games::Domino - Interface to the Domino game.
 
 =head1 VERSION
 
-Version 0.17
+Version 0.18
 
 =cut
 
@@ -89,7 +89,7 @@ is available to play with.
             $game->show;
         } until ($game->is_over);
 
-        $game->result;
+        print {*STDOUT} $game->result, "\n";
         $game->reset;
 
         do {
@@ -136,8 +136,10 @@ game is over.
 sub play {
     my ($self, $index) = @_;
 
-    $self->_play($index);
-    $self->_play;
+    # Human
+    $self->_play($index) unless $self->is_over;
+    # Computer
+    $self->_play unless $self->is_over;
 }
 
 =head2 get_available_tiles()
@@ -203,25 +205,39 @@ Declares who is the winner against whom and by how much margin.
 sub result {
     my ($self) = @_;
 
-    print {*STDOUT} "STOCK : ", $self->as_string, "\n";
+    print {*STDOUT} "STOCK : ", $self->as_string, "\n" if $self->debug;
     my $h = $self->human->value;
     my $c = $self->computer->value;
+
+    my $result = '';
     if ($h == $c) {
-        if (scalar(@{$self->{computer}->{bank}}) < scalar(@{$self->{human}->{bank}})) {
-            print {*STDOUT} "WINNER: [C] [$c] against [H] [$h]\n";
+        my $c_b = scalar(@{$self->computer->bank});
+        my $h_b = scalar(@{$self->human->bank});
+        if ($c_b > $h_b) {
+            $result .= "<blue><bold>Sorry, computer is the winner. ";
+            $result .= sprintf("Final score [</bold></blue><green><bold>%d</bold></green>", $c_b);
+            $result .= sprintf("<blue><bold>] against [</bold></blue><red><bold>%d</bold></red>", $h_b);
         }
         else {
-            print {*STDOUT} "WINNER: [H] [$h] against [C] [$c]\n";
+            $result .= "<blue><bold>Congratulation, you are the winner. ";
+            $result .= sprintf("Final score [</bold></blue><green><bold>%d</bold></green>", $h_b);
+            $result .= sprintf("<blue><bold>] against [</bold></blue><red><bold>%d</bold></red>", $c_b);
         }
     }
     elsif ($h > $c) {
-        print {*STDOUT} "WINNER: [C] [$c] against [H] [$h]\n";
+        $result .= "<blue><bold>Sorry, computer is the winner. ";
+        $result .= sprintf("Final score [</bold></blue><green><bold>%d</bold></green>", $c);
+        $result .= sprintf("<blue><bold>] against [</bold></blue><red><bold>%d</bold></red>", $h);
     }
     else {
-        print {*STDOUT} "WINNER: [H] [$h] against [C] [$c]\n";
+        $result .= "<blue><bold>Congratulation, you are the winner. ";
+        $result .= sprintf("Final score [</bold></blue><green><bold>%d</bold></green>", $h);
+        $result .= sprintf("<blue><bold>] against [</bold></blue><red><bold>%d</bold></red>", $c);
     }
 
-    $self->_line;
+    $result .= '<blue><bold>].</bold></blue>';
+
+    return Term::ANSIColor::Markup->colorize($result);
 }
 
 =head2 show()
@@ -406,16 +422,13 @@ sub _board {
     my ($self) = @_;
 
     my $board = '';
-    foreach (@{$self->board}) {
-        if ($_->color eq 'green') {
-            $board .= sprintf("<green><bold>%s</bold></green>==", $_);
+    if (scalar(@{$self->board})) {
+        foreach (@{$self->board}) {
+            $board .= sprintf("<%s><bold>%s</bold><\/%s>==", $_->color, $_, $_->color);
         }
-        elsif ($_->color eq 'red') {
-            $board .= sprintf("<red><bold>%s</bold></red>==", $_);
-        }
-        else {
-            $board .= sprintf("<blue><bold>%s</bold></blue>==", $_);
-        }
+    }
+    else {
+        $board .= '<blue><bold>EMPTY</bold></blue>';
     }
 
     $board =~ s/[\=]+\s?$//;

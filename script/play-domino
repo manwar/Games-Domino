@@ -1,6 +1,6 @@
 #!perl
 
-# Domino game script supplied by Games::Domino v0.17
+# Domino game script supplied by Games::Domino v0.18
 # Author: Mohammad S Anwar (mohammad.anwar at yahoo.com)
 
 use strict; use warnings;
@@ -30,7 +30,7 @@ do {
         $game->show;
     } until ($game->is_over);
 
-    $game->result;
+    print {*STDOUT} $game->result, "\n";
     $game->reset;
 
     do {

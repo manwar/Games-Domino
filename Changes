@@ -1,5 +1,10 @@
 Revision history for Games-Domino
 
+0.18    Wed Jun 03 10:35:00 2015
+        - Updated method result() to return the result.
+        - Updated method play() to continue unless the game is over.
+        - Updated method show() to show 'EMPTY' if the game board is empty.
+
 0.17    Mon Jun 01 13:35:00 2015
         - Added dependency on Term::ANSIColor::Markup in the Makefile.PL script.
         - Added new attribute 'color' to the class Games::Domino::Tile.
