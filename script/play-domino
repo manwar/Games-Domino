@@ -14,11 +14,13 @@ $SIG{'INT'} = sub {
 };
 
 my $game = Games::Domino->new;
+print {*STDOUT} $game->instructions, "\n";
 
 my ($response);
 do {
-    $game->show;
     do {
+        print {*STDOUT} $game->show, "\n";
+
         my ($index);
         do {
             print {*STDOUT} "Pick your tile [" . $game->get_available_tiles . "] or [B]? ";
@@ -27,9 +29,10 @@ do {
         } until ($game->is_valid_tile($index));
 
         $game->play($index);
-        $game->show;
+
     } until ($game->is_over);
 
+    print {*STDOUT} $game->show, "\n";
     print {*STDOUT} $game->result, "\n";
     $game->reset;
 

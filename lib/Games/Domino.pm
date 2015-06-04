@@ -1,6 +1,6 @@
 package Games::Domino;
 
-$Games::Domino::VERSION   = '0.18';
+$Games::Domino::VERSION   = '0.19';
 $Games::Domino::AUTHORITY = 'cpan:MANWAR';
 
 =head1 NAME
@@ -9,7 +9,7 @@ Games::Domino - Interface to the Domino game.
 
 =head1 VERSION
 
-Version 0.18
+Version 0.19
 
 =cut
 
@@ -76,8 +76,9 @@ is available to play with.
 
     my ($response);
     do {
-        $game->show;
         do {
+            print {*STDOUT} $game->show, "\n";
+
             my ($index);
             do {
                 print {*STDOUT} "Pick your tile [" . $game->get_available_tiles . "] or [B]? ";
@@ -86,9 +87,10 @@ is available to play with.
             } until ($game->is_valid_tile($index));
 
             $game->play($index);
-            $game->show;
+
         } until ($game->is_over);
 
+        print {*STDOUT} $game->show, "\n";
         print {*STDOUT} $game->result, "\n";
         $game->reset;
 
@@ -120,7 +122,6 @@ sub BUILD {
     }
 
     $self->_init;
-    $self->_instructions;
 }
 
 =head1 METHODS
@@ -209,51 +210,44 @@ sub result {
     my $h = $self->human->value;
     my $c = $self->computer->value;
 
-    my $result = '';
     if ($h == $c) {
         my $c_b = scalar(@{$self->computer->bank});
         my $h_b = scalar(@{$self->human->bank});
-        if ($c_b > $h_b) {
-            $result .= "<blue><bold>Sorry, computer is the winner. ";
-            $result .= sprintf("Final score [</bold></blue><green><bold>%d</bold></green>", $c_b);
-            $result .= sprintf("<blue><bold>] against [</bold></blue><red><bold>%d</bold></red>", $h_b);
+        if ($c_b < $h_b) {
+            return Term::ANSIColor::Markup->colorize(
+                $self->_result('Sorry, computer is the winner.', $c_b, $h_b));
         }
         else {
-            $result .= "<blue><bold>Congratulation, you are the winner. ";
-            $result .= sprintf("Final score [</bold></blue><green><bold>%d</bold></green>", $h_b);
-            $result .= sprintf("<blue><bold>] against [</bold></blue><red><bold>%d</bold></red>", $c_b);
+            return Term::ANSIColor::Markup->colorize(
+                $self->_result('Congratulation, you are the winner.', $h_b, $c_b));
         }
     }
     elsif ($h > $c) {
-        $result .= "<blue><bold>Sorry, computer is the winner. ";
-        $result .= sprintf("Final score [</bold></blue><green><bold>%d</bold></green>", $c);
-        $result .= sprintf("<blue><bold>] against [</bold></blue><red><bold>%d</bold></red>", $h);
+        return Term::ANSIColor::Markup->colorize(
+            $self->_result('Congratulation, you are the winner.', $h, $c));
     }
     else {
-        $result .= "<blue><bold>Congratulation, you are the winner. ";
-        $result .= sprintf("Final score [</bold></blue><green><bold>%d</bold></green>", $h);
-        $result .= sprintf("<blue><bold>] against [</bold></blue><red><bold>%d</bold></red>", $c);
+        return Term::ANSIColor::Markup->colorize(
+            $self->_result('Sorry, computer is the winner.', $c, $h));
     }
-
-    $result .= '<blue><bold>].</bold></blue>';
-
-    return Term::ANSIColor::Markup->colorize($result);
 }
 
 =head2 show()
 
-Print the current tiles of Computer, Human and matched one.
+Returns the current state of the game.
 
 =cut
 
 sub show {
     my ($self) = @_;
 
-    $self->_line;
-    print {*STDOUT} "[C]: " . $self->computer . "\n";
-    print {*STDOUT} "[H]: " . $self->human    . "\n";
-    print {*STDOUT} "[G]: " . $self->_board   . "\n";
-    $self->_line;
+    my $game = sprintf("%s\n", $self->_line);
+    $game .= sprintf("[C]: %s\n", $self->computer->as_string);
+    $game .= sprintf("[H]: %s\n", $self->human->as_string);
+    $game .= "[G]: " . $self->_board . "\n";
+    $game .= sprintf("%s", $self->_line);
+
+    return $game;
 }
 
 =head2 reset()
@@ -268,6 +262,18 @@ sub reset {
     $self->human->reset;
     $self->computer->reset;
     $self->_init;
+}
+
+=head2 instructions()
+
+Returns instructions regarding how to play.
+
+=cut
+
+sub instructions {
+    my ($self) = @_;
+
+    return $self->_instructions;
 }
 
 =head2 as_string()
@@ -436,10 +442,21 @@ sub _board {
     return Term::ANSIColor::Markup->colorize($board);
 }
 
+sub _result {
+    my ($self, $title, $a, $b) = @_;
+
+    my $result = sprintf("<blue><bold>%s ", $title);
+    $result .= sprintf("Final score [</bold></blue><green><bold>%d</bold></green>", $a);
+    $result .= sprintf("<blue><bold>] against [</bold></blue><red><bold>%d</bold></red>", $b);
+    $result .= '<blue><bold>].</bold></blue>';
+
+    return $result;
+}
+
 sub _line {
     my ($self) = @_;
 
-    print {*STDOUT} "="x76,"\n";
+    return "="x81;
 }
 
 sub _init {
@@ -492,7 +509,7 @@ sub _next {
 sub _instructions {
     my ($self) = @_;
 
-    my $help = qq {
+    return qq {
    _____                                 _____                     _
   / ____|                            _ _|  __ \\                  (_)
  | |  __  __ _ _ __ ___    ___  __ _(_|_) |  | |  ___  _ __ ___  _ _ __   ___
@@ -535,10 +552,6 @@ matching on board.
 Human randomly picked the tile [3 | 6] from the bank and but failed to  find  the
 matching on board.
 };
-
-    $self->_line;
-    print {*STDOUT} $help,"\n";
-    $self->_line;
 }
 
 =head1 AUTHOR
