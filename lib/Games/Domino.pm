@@ -1,6 +1,6 @@
 package Games::Domino;
 
-$Games::Domino::VERSION   = '0.19';
+$Games::Domino::VERSION   = '0.20';
 $Games::Domino::AUTHORITY = 'cpan:MANWAR';
 
 =head1 NAME
@@ -9,7 +9,7 @@ Games::Domino - Interface to the Domino game.
 
 =head1 VERSION
 
-Version 0.19
+Version 0.20
 
 =cut
 
@@ -73,20 +73,24 @@ is available to play with.
     };
 
     my $game = Games::Domino->new({ debug => 1 });
+    print {*STDOUT} $game->instructions, "\n";
 
     my ($response);
     do {
+        my $move = 1;
         do {
-            print {*STDOUT} $game->show, "\n";
-
             my ($index);
-            do {
-                print {*STDOUT} "Pick your tile [" . $game->get_available_tiles . "] or [B]? ";
-                $index = <STDIN>;
-                chomp $index;
-            } until ($game->is_valid_tile($index));
+            if ($move % 2 == 1) {
+                print {*STDOUT} $game->show, "\n";
+                do {
+                    print {*STDOUT} "Pick your tile [" . $game->get_available_tiles . "] or [B]? ";
+                    $index = <STDIN>;
+                    chomp $index;
+                } until ($game->is_valid_tile($index));
+            }
 
             $game->play($index);
+            $move++;
 
         } until ($game->is_over);
 
@@ -137,10 +141,30 @@ game is over.
 sub play {
     my ($self, $index) = @_;
 
-    # Human
-    $self->_play($index) unless $self->is_over;
-    # Computer
-    $self->_play unless $self->is_over;
+    my $player = $self->current;
+    my $name   = $player->name;
+
+    if (defined $index) {
+        if ($index =~ /^B$/i) {
+            $self->_pick_from_bank($player);
+        }
+        else {
+            my $tile = $player->_tile($index);
+            print {*STDOUT} "[H] [P]: $tile [S]\n" if $self->debug;
+            splice(@{$player->{bank}}, $index-1, 1);
+            $self->_save($tile);
+        }
+    }
+    else {
+        my $tile = $player->pick($self->board_l, $self->board_r);
+        if (defined $tile) {
+            print {*STDOUT} "[C] [P]: $tile [S]\n" if $self->debug;
+            $self->_save($tile);
+        }
+        else {
+            $self->_pick_from_bank($player);
+        }
+    }
 }
 
 =head2 get_available_tiles()
@@ -207,29 +231,38 @@ sub result {
     my ($self) = @_;
 
     print {*STDOUT} "STOCK : ", $self->as_string, "\n" if $self->debug;
-    my $h = $self->human->value;
-    my $c = $self->computer->value;
-
-    if ($h == $c) {
+    my ($result);
+    if (scalar(@{$self->stock}) == 2) {
         my $c_b = scalar(@{$self->computer->bank});
         my $h_b = scalar(@{$self->human->bank});
         if ($c_b < $h_b) {
-            return Term::ANSIColor::Markup->colorize(
-                $self->_result('Sorry, computer is the winner.', $c_b, $h_b));
+            $result = $self->_result('Sorry, computer is the winner.', $c_b, $h_b);
         }
         else {
-            return Term::ANSIColor::Markup->colorize(
-                $self->_result('Congratulation, you are the winner.', $h_b, $c_b));
+            $result = $self->_result('Congratulation, you are the winner.', $h_b, $c_b);
         }
     }
-    elsif ($h > $c) {
-        return Term::ANSIColor::Markup->colorize(
-            $self->_result('Congratulation, you are the winner.', $h, $c));
-    }
     else {
-        return Term::ANSIColor::Markup->colorize(
-            $self->_result('Sorry, computer is the winner.', $c, $h));
+        my $h = $self->human->value;
+        my $c = $self->computer->value;
+
+        if (scalar(@{$self->human->bank}) == 0) {
+            $result = $self->_result('Congratulation, you are the winner.', $h, $c);
+        }
+        elsif (scalar(@{$self->computer->bank}) == 0) {
+            $result = $self->_result('Sorry, computer is the winner.', $c, $h);
+        }
+        else {
+            if ($h < $c) {
+                $result = $self->_result('Congratulation, you are the winner.', $h, $c);
+            }
+            else {
+                $result = $self->_result('Sorry, computer is the winner.', $c, $h);
+            }
+        }
     }
+
+    return Term::ANSIColor::Markup->colorize($result);
 }
 
 =head2 show()
@@ -300,35 +333,6 @@ sub as_string {
 #
 #
 # PRIVATE METHODS
-
-sub _play {
-    my ($self, $index) = @_;
-
-    my $player = $self->current;
-    my $name   = $player->name;
-
-    if (defined $index) {
-        if ($index =~ /^B$/i) {
-            $self->_pick_from_bank($player);
-        }
-        else {
-            my $tile = $player->_tile($index);
-            print {*STDOUT} "[H] [P]: $tile [S]\n" if $self->debug;
-            splice(@{$player->{bank}}, $index-1, 1);
-            $self->_save($tile);
-        }
-    }
-    else {
-        my $tile = $player->pick($self->board_l, $self->board_r);
-        if (defined $tile) {
-            print {*STDOUT} "[C] [P]: $tile [S]\n" if $self->debug;
-            $self->_save($tile);
-        }
-        else {
-            $self->_pick_from_bank($player);
-        }
-    }
-}
 
 sub _pick_from_bank {
     my ($self, $player) = @_;

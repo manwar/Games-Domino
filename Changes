@@ -1,5 +1,11 @@
 Revision history for Games-Domino
 
+0.20    Fri Jun 05 12:00:00 2015
+        - Fixed method result() to spit out the right result.
+        - Dropped private method _play() and moved the code to the method play().
+        - Updated the game script to respect the above changes.
+        - Updated the section "SYNOPSIS" w.r.t the changes to the game script.
+
 0.19    Thu Jun 04 12:00:00 2015
         - Updated method result() to return correct result string efficiently.
         - Refactored method show() to return state of the game.

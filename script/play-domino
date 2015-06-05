@@ -1,6 +1,6 @@
 #!perl
 
-# Domino game script supplied by Games::Domino v0.18
+# Domino game script supplied by Games::Domino v0.20
 # Author: Mohammad S Anwar (mohammad.anwar at yahoo.com)
 
 use strict; use warnings;
@@ -18,17 +18,20 @@ print {*STDOUT} $game->instructions, "\n";
 
 my ($response);
 do {
+    my $move = 1;
     do {
-        print {*STDOUT} $game->show, "\n";
-
         my ($index);
-        do {
-            print {*STDOUT} "Pick your tile [" . $game->get_available_tiles . "] or [B]? ";
-            $index = <STDIN>;
-            chomp $index;
-        } until ($game->is_valid_tile($index));
+        if ($move % 2 == 1) {
+            print {*STDOUT} $game->show, "\n";
+            do {
+                print {*STDOUT} "Pick your tile [" . $game->get_available_tiles . "] or [B]? ";
+                $index = <STDIN>;
+                chomp $index;
+            } until ($game->is_valid_tile($index));
+        }
 
         $game->play($index);
+        $move++;
 
     } until ($game->is_over);
 
