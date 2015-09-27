@@ -1,6 +1,6 @@
 package Games::Domino;
 
-$Games::Domino::VERSION   = '0.20';
+$Games::Domino::VERSION   = '0.21';
 $Games::Domino::AUTHORITY = 'cpan:MANWAR';
 
 =head1 NAME
@@ -9,7 +9,7 @@ Games::Domino - Interface to the Domino game.
 
 =head1 VERSION
 
-Version 0.20
+Version 0.21
 
 =cut
 
@@ -72,7 +72,7 @@ is available to play with.
         print {*STDOUT} "\n\nCaught Interrupt (^C), Aborting the game.\n"; exit(1);
     };
 
-    my $game = Games::Domino->new({ debug => 1 });
+    my $game = Games::Domino->new;
     print {*STDOUT} $game->instructions, "\n";
 
     my ($response);
