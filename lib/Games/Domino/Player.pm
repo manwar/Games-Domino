@@ -1,6 +1,6 @@
 package Games::Domino::Player;
 
-$Games::Domino::Player::VERSION   = '0.21';
+$Games::Domino::Player::VERSION   = '0.22';
 $Games::Domino::Player::AUTHORITY = 'cpan:MANWAR';
 
 =head1 NAME
@@ -9,7 +9,7 @@ Games::Domino::Player - Represents the player of the Domino game.
 
 =head1 VERSION
 
-Version 0.21
+Version 0.22
 
 =cut
 
@@ -247,7 +247,7 @@ Mohammad S Anwar, C<< <mohammad.anwar at yahoo.com> >>
 
 =head1 REPOSITORY
 
-L<https://github.com/Manwar/Games-Domino>
+L<https://github.com/manwar/Games-Domino>
 
 =head1 BUGS
 

@@ -1,5 +1,9 @@
 Revision history for Games-Domino
 
+0.22    Wed Mar 09 15:45:00 2016
+        - Assigned minimum version required for Moo and namespace::clean.
+        - Added key 'provides' to the Makefile.PL script.
+
 0.21    Sun Sep 27 09:40:00 2015
         - Updated section "SYNOPSIS" to reflect the changes to the game script.
 
