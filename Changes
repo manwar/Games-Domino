@@ -1,4 +1,8 @@
-Revision history for Games-Domino
+Revision history for Games::Domino
+
+0.23    Wed Aug 24 10:10:00 2016
+        - Updated copyright year information.
+        - Tidied up unit test scripts.
 
 0.22    Wed Mar 09 15:45:00 2016
         - Assigned minimum version required for Moo and namespace::clean.

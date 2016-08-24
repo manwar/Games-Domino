@@ -1,6 +1,6 @@
 package Games::Domino::Tile;
 
-$Games::Domino::Tile::VERSION   = '0.22';
+$Games::Domino::Tile::VERSION   = '0.23';
 $Games::Domino::Tile::AUTHORITY = 'cpan:MANWAR';
 
 =head1 NAME
@@ -9,7 +9,7 @@ Games::Domino::Tile - Represents the tile of the Domino game.
 
 =head1 VERSION
 
-Version 0.22
+Version 0.23
 
 =cut
 
@@ -154,7 +154,7 @@ L<http://search.cpan.org/dist/Games-Domino/>
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright 2012 - 2015 Mohammad S Anwar.
+Copyright 2012 - 2016 Mohammad S Anwar.
 
 This program  is  free software; you can redistribute it and / or modify it under
 the  terms  of the the Artistic License (2.0). You may obtain a  copy of the full
