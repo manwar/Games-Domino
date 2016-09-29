@@ -11,7 +11,7 @@ eval { Games::Domino::Player->new() };
 like($@, qr/Missing required arguments: nam/);
 
 eval { Games::Domino::Player->new({ name => 'A' }) };
-like($@, qr/Attribute \(name\) does not pass the type constraint/);
+like($@, qr/Only H or C allowed/);
 
 $player = Games::Domino::Player->new({ name => 'H', show => 1 });
 

@@ -19,10 +19,10 @@ eval { Games::Domino::Tile->new({ right => 1 }) };
 like($@, qr/Missing required arguments: left/);
 
 eval { Games::Domino::Tile->new({ left => 1, right => 7 }); };
-like($@, qr/isa check for "right" failed/);
+like($@, qr/Only 0 to 6 allowed/);
 
 eval { Games::Domino::Tile->new({ left => 7, right => 1 }); };
-like($@, qr/isa check for "left" failed/);
+like($@, qr/Only 0 to 6 allowed/);
 
 eval { Games::Domino::Tile->new({ left => 1, right => 1, double => 0 }); };
 like($@, qr/ERROR: Invalid double attribute for the tile/);

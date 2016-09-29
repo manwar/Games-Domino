@@ -1,6 +1,6 @@
 package Games::Domino;
 
-$Games::Domino::VERSION   = '0.23';
+$Games::Domino::VERSION   = '0.24';
 $Games::Domino::AUTHORITY = 'cpan:MANWAR';
 
 =head1 NAME
@@ -9,7 +9,7 @@ Games::Domino - Interface to the Domino game.
 
 =head1 VERSION
 
-Version 0.23
+Version 0.24
 
 =cut
 
@@ -20,7 +20,7 @@ use Term::ANSIColor::Markup;
 
 use Games::Domino::Tile;
 use Games::Domino::Player;
-use Games::Domino::Params qw($ZeroOrOne $ZeroToSix);
+use Games::Domino::Params qw(ZeroOrOne ZeroToSix);
 
 use Moo;
 use namespace::clean;
@@ -32,10 +32,10 @@ has 'board'    => (is => 'rw');
 has 'human'    => (is => 'rw');
 has 'computer' => (is => 'rw');
 has 'current'  => (is => 'rw');
-has 'board_l'  => (is => 'rw', isa => $ZeroToSix);
-has 'board_r'  => (is => 'rw', isa => $ZeroToSix);
-has 'cheat'    => (is => 'ro', isa => $ZeroOrOne, default => sub { 0 });
-has 'debug'    => (is => 'rw', isa => $ZeroOrOne, default => sub { 0 });
+has 'board_l'  => (is => 'rw', isa => ZeroToSix);
+has 'board_r'  => (is => 'rw', isa => ZeroToSix);
+has 'cheat'    => (is => 'ro', isa => ZeroOrOne, default => sub { 0 });
+has 'debug'    => (is => 'rw', isa => ZeroOrOne, default => sub { 0 });
 has 'action'   => (is => 'rw', default => sub { [] });
 
 =head1 DESCRIPTION

@@ -1,6 +1,6 @@
 #!perl
 
-# Domino game script supplied by Games::Domino v0.20
+# Domino game script supplied by Games::Domino v0.24
 # Author: Mohammad S Anwar (mohammad.anwar at yahoo.com)
 
 use strict; use warnings;

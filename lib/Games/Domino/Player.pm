@@ -1,6 +1,6 @@
 package Games::Domino::Player;
 
-$Games::Domino::Player::VERSION   = '0.23';
+$Games::Domino::Player::VERSION   = '0.24';
 $Games::Domino::Player::AUTHORITY = 'cpan:MANWAR';
 
 =head1 NAME
@@ -9,20 +9,20 @@ Games::Domino::Player - Represents the player of the Domino game.
 
 =head1 VERSION
 
-Version 0.23
+Version 0.24
 
 =cut
 
 use 5.006;
 use Data::Dumper;
-use Games::Domino::Params qw($HorC);
+use Games::Domino::Params qw(HorC);
 
 use Moo;
 use namespace::clean;
 
 use overload ('""' => \&as_string);
 
-has 'name'  => (is => 'ro', isa => $HorC, required => 1);
+has 'name'  => (is => 'ro', isa => HorC, required => 1);
 has 'bank'  => (is => 'rw');
 has 'score' => (is => 'rw');
 has 'show'  => (is => 'rw', default => sub { return 0 });

@@ -1,6 +1,6 @@
 package Games::Domino::Tile;
 
-$Games::Domino::Tile::VERSION   = '0.23';
+$Games::Domino::Tile::VERSION   = '0.24';
 $Games::Domino::Tile::AUTHORITY = 'cpan:MANWAR';
 
 =head1 NAME
@@ -9,24 +9,24 @@ Games::Domino::Tile - Represents the tile of the Domino game.
 
 =head1 VERSION
 
-Version 0.23
+Version 0.24
 
 =cut
 
 use 5.006;
 use Data::Dumper;
-use Games::Domino::Params qw($ZeroOrOne $ZeroToSix);
+use Games::Domino::Params qw(ZeroOrOne ZeroToSix);
 
 use Moo;
 use namespace::clean;
 
 use overload ('""' => \&as_string);
 
-has 'left'   => (is => 'rw', isa => $ZeroToSix, required => 1);
-has 'right'  => (is => 'rw', isa => $ZeroToSix, required => 1);
-has 'double' => (is => 'ro', isa => $ZeroOrOne, required => 1);
-has 'top'    => (is => 'rw', isa => $ZeroToSix);
-has 'bottom' => (is => 'rw', isa => $ZeroToSix);
+has 'left'   => (is => 'rw', isa => ZeroToSix, required => 1);
+has 'right'  => (is => 'rw', isa => ZeroToSix, required => 1);
+has 'double' => (is => 'ro', isa => ZeroOrOne, required => 1);
+has 'top'    => (is => 'rw', isa => ZeroToSix);
+has 'bottom' => (is => 'rw', isa => ZeroToSix);
 has 'color'  => (is => 'rw', default => sub { 'blue' });
 
 =head1 DESCRIPTION

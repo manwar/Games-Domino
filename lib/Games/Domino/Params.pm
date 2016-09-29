@@ -1,6 +1,6 @@
 package Games::Domino::Params;
 
-$Games::Domino::Params::VERSION   = '0.23';
+$Games::Domino::Params::VERSION   = '0.24';
 $Games::Domino::Params::AUTHORITY = 'cpan:MANWAR';
 
 =head1 NAME
@@ -9,31 +9,33 @@ Games::Domino::Params - Placeholder for parameters for Games::Domino.
 
 =head1 VERSION
 
-Version 0.23
+Version 0.24
 
 =cut
 
 use 5.006;
 use strict; use warnings;
 use Data::Dumper;
-use vars qw(@ISA @EXPORT @EXPORT_OK);
 
-require Exporter;
-@ISA       = qw(Exporter);
-@EXPORT_OK = qw($ZeroOrOne $ZeroToSix $HorC);
+use Type::Library -base, -declare => qw(ZeroOrOne ZeroToSix HorC);
+use Types::Standard qw(Str);
+use Type::Utils;
 
-our $ZeroOrOne = sub {
-    die "ERROR: Only 0 or 1 allowed.\n" unless ($_[0] =~ /^[0|1]$/);
-};
+declare 'ZeroOrOne',
+    as Str,
+    where   { /^[0|1]$/ },
+    message { "ERROR: Only 0 or 1 allowed." };
 
-our $ZeroToSix = sub {
-    die "ERROR: Only 0 to 6 allowed.\n" unless ($_[0] =~ /^[0-6]$/);
-};
+declare 'ZeroToSix',
+    as Str,
+    where   { /^[0-6]$/ },
+    message { "ERROR: Only 0 to 6 allowed." };
 
-our $HorC = sub {
-    die "Attribute (name) does not pass the type constraint [$_[0]].\n"
-        unless ($_[0] =~ /^[H|C]$/i);
-};
+declare 'HorC',
+    as Str,
+    where   { /^[H|C]$/i },
+    message { "ERROR: Only H or C allowed." };
+
 
 =head1 DESCRIPTION
 
