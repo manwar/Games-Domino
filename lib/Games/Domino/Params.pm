@@ -1,6 +1,6 @@
 package Games::Domino::Params;
 
-$Games::Domino::Params::VERSION   = '0.24';
+$Games::Domino::Params::VERSION   = '0.25';
 $Games::Domino::Params::AUTHORITY = 'cpan:MANWAR';
 
 =head1 NAME
@@ -9,7 +9,7 @@ Games::Domino::Params - Placeholder for parameters for Games::Domino.
 
 =head1 VERSION
 
-Version 0.24
+Version 0.25
 
 =cut
 
@@ -35,7 +35,6 @@ declare 'HorC',
     as Str,
     where   { /^[H|C]$/i },
     message { "ERROR: Only H or C allowed." };
-
 
 =head1 DESCRIPTION
 

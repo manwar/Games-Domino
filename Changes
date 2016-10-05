@@ -1,5 +1,9 @@
 Revision history for Games::Domino
 
+0.25    Wed Oct 05 10:40:00 2016
+        - Documented method reset() in the package Games::Domino::Player.
+        - Added fallback switch to overload pragma.
+
 0.24    Thu Sep 29 10:50:00 2016
         - Improved type definitions for 'ZeroOrOne', 'ZeroToSix' and 'HorC'.
 

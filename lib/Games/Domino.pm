@@ -1,6 +1,6 @@
 package Games::Domino;
 
-$Games::Domino::VERSION   = '0.24';
+$Games::Domino::VERSION   = '0.25';
 $Games::Domino::AUTHORITY = 'cpan:MANWAR';
 
 =head1 NAME
@@ -9,7 +9,7 @@ Games::Domino - Interface to the Domino game.
 
 =head1 VERSION
 
-Version 0.24
+Version 0.25
 
 =cut
 
@@ -25,7 +25,7 @@ use Games::Domino::Params qw(ZeroOrOne ZeroToSix);
 use Moo;
 use namespace::clean;
 
-use overload ('""' => \&as_string);
+use overload q{""} => 'as_string', fallback => 1;
 
 has 'stock'    => (is => 'rw');
 has 'board'    => (is => 'rw');

@@ -1,6 +1,6 @@
 package Games::Domino::Player;
 
-$Games::Domino::Player::VERSION   = '0.24';
+$Games::Domino::Player::VERSION   = '0.25';
 $Games::Domino::Player::AUTHORITY = 'cpan:MANWAR';
 
 =head1 NAME
@@ -9,7 +9,7 @@ Games::Domino::Player - Represents the player of the Domino game.
 
 =head1 VERSION
 
-Version 0.24
+Version 0.25
 
 =cut
 
@@ -20,7 +20,7 @@ use Games::Domino::Params qw(HorC);
 use Moo;
 use namespace::clean;
 
-use overload ('""' => \&as_string);
+use overload q{""} => 'as_string', fallback => 1;
 
 has 'name'  => (is => 'ro', isa => HorC, required => 1);
 has 'bank'  => (is => 'rw');
@@ -55,6 +55,16 @@ sub save {
 }
 
 =head2 reset()
+
+Resets player's score and bank (of tiles).
+
+    use strict; use warnings;
+    use Games::Domino::Tile;
+    use Games::Domino::Player;
+
+    my $player = Games::Domino::Player->new({ name => 'H' });
+    $player->save(Games::Domino::Tile->new({ left => 1, right => 4 }));
+    $player-reset();
 
 =cut
 
