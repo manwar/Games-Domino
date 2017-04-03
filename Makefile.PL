@@ -32,10 +32,10 @@ WriteMakefile(
     (eval { ExtUtils::MakeMaker->VERSION(6.46) } ? (META_MERGE => {
         'meta-spec' => { version => 2 },
         provides    => {
-            'Games::Domino'         => { file => 'lib/Games/Domino.pm'       , version => '0.25' },
-            'Games::Domino::Player' => { file => 'lib/Games/Domino/Player.pm', version => '0.25' },
-            'Games::Domino::Tile'   => { file => 'lib/Games/Domino/Tile.pm'  , version => '0.25' },
-            'Games::Domino::Params' => { file => 'lib/Games/Domino/Params.pm', version => '0.25' },
+            'Games::Domino'         => { file => 'lib/Games/Domino.pm'       , version => '0.26' },
+            'Games::Domino::Player' => { file => 'lib/Games/Domino/Player.pm', version => '0.26' },
+            'Games::Domino::Tile'   => { file => 'lib/Games/Domino/Tile.pm'  , version => '0.26' },
+            'Games::Domino::Params' => { file => 'lib/Games/Domino/Params.pm', version => '0.26' },
         },
         resources => {
             repository => {

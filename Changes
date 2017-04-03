@@ -1,5 +1,8 @@
 Revision history for Games::Domino
 
+0.26    Mon Apr 03 16:40:00 2017
+        - Added test scripts (t/meta-json.t and t/meta-yml.t).
+
 0.25    Wed Oct 05 10:40:00 2016
         - Documented method reset() in the package Games::Domino::Player.
         - Added fallback switch to overload pragma.
