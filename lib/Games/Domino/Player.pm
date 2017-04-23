@@ -1,6 +1,6 @@
 package Games::Domino::Player;
 
-$Games::Domino::Player::VERSION   = '0.26';
+$Games::Domino::Player::VERSION   = '0.27';
 $Games::Domino::Player::AUTHORITY = 'cpan:MANWAR';
 
 =head1 NAME
@@ -9,7 +9,7 @@ Games::Domino::Player - Represents the player of the Domino game.
 
 =head1 VERSION
 
-Version 0.26
+Version 0.27
 
 =cut
 

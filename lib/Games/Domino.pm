@@ -1,6 +1,6 @@
 package Games::Domino;
 
-$Games::Domino::VERSION   = '0.26';
+$Games::Domino::VERSION   = '0.27';
 $Games::Domino::AUTHORITY = 'cpan:MANWAR';
 
 =head1 NAME
@@ -9,12 +9,14 @@ Games::Domino - Interface to the Domino game.
 
 =head1 VERSION
 
-Version 0.26
+Version 0.27
 
 =cut
 
 use 5.006;
 use Data::Dumper;
+use Term::ReadKey;
+use Term::Screen::Lite;
 use List::Util qw(shuffle);
 use Term::ANSIColor::Markup;
 
@@ -37,6 +39,7 @@ has 'board_r'  => (is => 'rw', isa => ZeroToSix);
 has 'cheat'    => (is => 'ro', isa => ZeroOrOne, default => sub { 0 });
 has 'debug'    => (is => 'rw', isa => ZeroOrOne, default => sub { 0 });
 has 'action'   => (is => 'rw', default => sub { [] });
+has 'screen'   => (is => 'ro', default => sub { Term::Screen::Lite->new; });
 
 =head1 DESCRIPTION
 
@@ -68,12 +71,18 @@ is available to play with.
     select(STDOUT);
     $|=1;
 
+    my $game = Games::Domino->new;
+
     $SIG{'INT'} = sub {
+        $game->read_mode;
         print {*STDOUT} "\n\nCaught Interrupt (^C), Aborting the game.\n"; exit(1);
     };
 
-    my $game = Games::Domino->new;
-    print {*STDOUT} $game->instructions, "\n";
+    print {*STDOUT} $game->about_game,  "\n";
+    $game->pause;
+    print {*STDOUT} $game->how_to_play, "\n";
+    $game->pause('Press any key to start the game...');
+    $game->screen->clear;
 
     my ($response);
     do {
@@ -230,16 +239,19 @@ Declares who is the winner against whom and by how much margin.
 sub result {
     my ($self) = @_;
 
-    print {*STDOUT} "STOCK : ", $self->as_string, "\n" if $self->debug;
     my ($result);
     if (scalar(@{$self->stock}) == 2) {
         my $c_b = scalar(@{$self->computer->bank});
         my $h_b = scalar(@{$self->human->bank});
+        my $msg = 'Bank has only 2 tiles left. ';
         if ($c_b < $h_b) {
-            $result = $self->_result('Sorry, computer is the winner.', $c_b, $h_b);
+            $result = $self->_result("${msg}. Therefore, computer is declared the winner, having less tiles than you.", $c_b, $h_b);
+        }
+        elsif ($c_b > $h_b) {
+            $result = $self->_result("${msg}. Therefore, you are declared the winner, having less tiles than computer.", $h_b, $c_b);
         }
         else {
-            $result = $self->_result('Congratulation, you are the winner.', $h_b, $c_b);
+            $result = $self->_result('${msg}. Therefore, game is declared draw as both players have the same number of tiles.', $h_b, $c_b);
         }
     }
     else {
@@ -247,19 +259,26 @@ sub result {
         my $c = $self->computer->value;
 
         if (scalar(@{$self->human->bank}) == 0) {
-            $result = $self->_result('Congratulation, you are the winner.', $h, $c);
+            $result = $self->_result('Congratulation, you are the winner as you have no tiles left.', $h, $c);
         }
         elsif (scalar(@{$self->computer->bank}) == 0) {
-            $result = $self->_result('Sorry, computer is the winner.', $c, $h);
+            $result = $self->_result('Sorry, computer is the winner as it has no tiles left.', $c, $h);
         }
         else {
             if ($h < $c) {
-                $result = $self->_result('Congratulation, you are the winner.', $h, $c);
+                $result = $self->_result('Congratulation, you are the winner as your remaining tiles value is less than computer.', $h, $c);
+            }
+            elsif ($h > $c) {
+                $result = $self->_result('Sorry, computer is the winner as it\'s remaining tiles value is less than yours.', $c, $h);
             }
             else {
-                $result = $self->_result('Sorry, computer is the winner.', $c, $h);
+                $result = $self->_result('Game is declared draw as both the players reamaining tiles value is the same.', $c, $h);
             }
         }
+    }
+
+    if ($self->debug) {
+        $result = sprintf("STOCK : %s\n%s", $self->as_string, $result);
     }
 
     return Term::ANSIColor::Markup->colorize($result);
@@ -297,18 +316,6 @@ sub reset {
     $self->_init;
 }
 
-=head2 instructions()
-
-Returns instructions regarding how to play.
-
-=cut
-
-sub instructions {
-    my ($self) = @_;
-
-    return $self->_instructions;
-}
-
 =head2 as_string()
 
 Returns all the unused tiles remained in the bank.
@@ -328,6 +335,78 @@ sub as_string {
     $domino =~ s/[\=]+\s?$//;
     $domino =~ s/\s+$//;
     return $domino;
+}
+
+sub pause {
+    my ($self, $message) = @_;
+
+    $message = "Press any key to continue..." unless defined $message;
+    print {*STDOUT} $message;
+
+    $self->read_mode('cbreak');
+    ReadKey(0);
+    $self->read_mode;
+}
+
+sub read_mode {
+    my ($self, $state) = @_;
+
+    $state = 'normal' unless defined $state;
+    ReadMode $state;
+}
+
+sub about_game {
+    my ($self) = @_;
+
+    return qq {
++-------------------------------------------------------------------------------+
+|                                                                               |
+|                              Games::Domino v$Games::Domino::VERSION                              |
+|                                                                               |
++-------------------------------------------------------------------------------+
+Tiles are numbered left to right starting with 1. Symbols used in this game are:
+    [C]: Code for the computer player
+    [H]: Code for the human player
+    [P]: Personal tile
+    [B]: Tile picked from the bank
+    [S]: Successfully found the matching tile
+    [F]: Unable to find the matching tile
+    [G]: All matched tiles so far
++-------------------------------------------------------------------------------+
+};
+}
+
+sub how_to_play {
+    my ($self) = @_;
+
+    return qq {
+Example:
+
+[C] [P]: [5 | 6] [S]
+Computer picked the tile [5 | 6] from   his own collection and successfully found
+the matching on board.
+
+[H] [P]: [6 | 6] [S]
+Human picked the tile [6 | 6] from his own collection and successfully found  the
+matching on board.
+
+[C] [B]: [2 | 6] [S]
+Computer randomly picked the tile [2 | 6] from the bank and successfully found the
+matching on board.
+
+[C] [B]: [3 | 4] [F]
+Computer randomly picked the tile [3 | 4] from the bank and but failed to find the
+matching on board.
+
+[H] [B]: [2 | 2] [S]
+Human randomly picked the tile [2 | 2] from the bank and successfully  found  the
+matching on board.
+
+[H] [B]: [3 | 6] [F]
+Human randomly picked the tile [3 | 6] from the bank and but failed to  find  the
+matching on board.
++-------------------------------------------------------------------------------+
+};
 }
 
 #
@@ -508,54 +587,6 @@ sub _next {
     else {
         $self->current($self->human);
     }
-}
-
-sub _instructions {
-    my ($self) = @_;
-
-    return qq {
-   _____                                 _____                     _
-  / ____|                            _ _|  __ \\                  (_)
- | |  __  __ _ _ __ ___    ___  __ _(_|_) |  | |  ___  _ __ ___  _ _ __   ___
- | | |_ |/ _` | '_ ` _ \\ / _ \\/ __|   | |  | | / _ \\| '_  ` _ \\| | ' \\ / \\
- | |__| | (_| | | | | | |  __/\\__ \\_ _| |__| | (_) | | | | | | | | | | (_)  \|
-  \\_____|\\__,_|_| |_| |_|\\___||___(_|_)_____/ \\___/|_| |_| |_|_|_| |_|\\___/
-
-Tiles are numbered left to right starting with 1. Symbols used in this game are:
-    [C]: Code for the computer player
-    [H]: Code for the human player
-    [P]: Personal tile
-    [B]: Tile picked from the bank
-    [S]: Successfully found the matching tile
-    [F]: Unable to find the matching tile
-    [G]: All matched tiles so far
-
-Example:
-
-[C] [P]: [5 | 6] [S]
-Computer picked the tile [5 | 6] from   his own collection and successfully found
-the matching on board.
-
-[H] [P]: [6 | 6] [S]
-Human picked the tile [6 | 6] from his own collection and successfully found  the
-matching on board.
-
-[C] [B]: [2 | 6] [S]
-Computer randomly picked the tile [2 | 6] from the bank and successfully found the
-matching on board.
-
-[C] [B]: [3 | 4] [F]
-Computer randomly picked the tile [3 | 4] from the bank and but failed to find the
-matching on board.
-
-[H] [B]: [2 | 2] [S]
-Human randomly picked the tile [2 | 2] from the bank and successfully  found  the
-matching on board.
-
-[H] [B]: [3 | 6] [F]
-Human randomly picked the tile [3 | 6] from the bank and but failed to  find  the
-matching on board.
-};
 }
 
 =head1 AUTHOR
