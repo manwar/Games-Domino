@@ -1,6 +1,6 @@
 package Games::Domino;
 
-$Games::Domino::VERSION   = '0.27';
+$Games::Domino::VERSION   = '0.28';
 $Games::Domino::AUTHORITY = 'cpan:MANWAR';
 
 =head1 NAME
@@ -9,7 +9,7 @@ Games::Domino - Interface to the Domino game.
 
 =head1 VERSION
 
-Version 0.27
+Version 0.28
 
 =cut
 
@@ -47,7 +47,7 @@ This is a very basic Domino game played by two players (Computer vs Human) at th
 moment. This is just an  initial draft  of  Proof of Concept, also to get my head
 around the game which I have never played in my life before.There is a cheat flag
 which makes tiles for "Computer" visible to the other player "Human".  Avoid this
-flag if possible.By default  the cheat flag is turned off.There is a debug switch
+flag if possible.By default the cheat flag is turned off.There is  verbose switch
 as well which is turned off by default. They  are  arranged  like  here before we
 shuffle to start the the game.
 
@@ -65,61 +65,14 @@ Below is the working code for the Domino game using the L<Games::Domino> package
 The game script C<play-domino> is supplied with the distribution and  on install,
 is available to play with.
 
-    use strict; use warnings;
-    use Games::Domino;
+  USAGE: play-domino [-h] [long options...]
 
-    select(STDOUT);
-    $|=1;
+    --verbose  Play the game in verbose mode.
 
-    my $game = Games::Domino->new;
-
-    $SIG{'INT'} = sub {
-        $game->read_mode;
-        print {*STDOUT} "\n\nCaught Interrupt (^C), Aborting the game.\n"; exit(1);
-    };
-
-    print {*STDOUT} $game->about_game,  "\n";
-    $game->pause;
-    print {*STDOUT} $game->how_to_play, "\n";
-    $game->pause('Press any key to start the game...');
-    $game->screen->clear;
-
-    my ($response);
-    do {
-        my $move = 1;
-        do {
-            my ($index);
-            if ($move % 2 == 1) {
-                print {*STDOUT} $game->show, "\n";
-                do {
-                    print {*STDOUT} "Pick your tile [" . $game->get_available_tiles . "] or [B]? ";
-                    $index = <STDIN>;
-                    chomp $index;
-                } until ($game->is_valid_tile($index));
-            }
-
-            $game->play($index);
-            $move++;
-
-        } until ($game->is_over);
-
-        print {*STDOUT} $game->show, "\n";
-        print {*STDOUT} $game->result, "\n";
-        $game->reset;
-
-        do {
-            print {*STDOUT} "Do you wish to continue (Y/N)? ";
-            $response = <STDIN>;
-            chomp($response);
-        } until (defined $response && ($response =~ /^[Y|N]$/i));
-
-    } until ($response =~ /^N$/i);
-
-    print {*STDOUT} "\nThank you.\n";
-
-Once it is installed, it can be played on a terminal/command window  as below:
-
-    $ play-domino
+    --usage    show a short help message
+    -h         show a compact help message
+    --help     show a long help message
+    --man      show the manual
 
 =cut
 

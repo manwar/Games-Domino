@@ -1,56 +1,67 @@
-#!perl
+package App::Games::Domino;
 
-# Domino game script supplied by Games::Domino v0.27
-# Author: Mohammad S Anwar (mohammad.anwar at yahoo.com)
+use Games::Domino;
+use Moo;
+use namespace::clean;
+use MooX::Options;
+
+option 'verbose' => (is => 'ro', order => 1, default => sub { 0 }, doc => 'Play the game in verbose mode.');
+
+sub run {
+    my ($self) = @_;
+
+    select(STDOUT);
+    $|=1;
+
+    my $game = Games::Domino->new(debug => $self->{verbose});
+
+    $SIG{'INT'} = sub {
+        $game->read_mode;
+        print {*STDOUT} "\n\nCaught Interrupt (^C), Aborting the game.\n"; exit(1);
+    };
+
+    print {*STDOUT} $game->about_game,  "\n";
+    $game->pause;
+    print {*STDOUT} $game->how_to_play, "\n";
+    $game->pause('Press any key to start the game...');
+
+    my ($response);
+    do {
+        $game->screen->clear;
+        my $move = 1;
+        do {
+            my ($index);
+            if ($move % 2 == 1) {
+                print {*STDOUT} $game->show, "\n";
+                do {
+                    print {*STDOUT} "Pick your tile [" . $game->get_available_tiles . "] or [B]? ";
+                    $index = <STDIN>;
+                    chomp $index;
+                } until ($game->is_valid_tile($index));
+            }
+
+            $game->play($index);
+            $move++;
+
+        } until ($game->is_over);
+
+        print {*STDOUT} $game->show,   "\n";
+        print {*STDOUT} $game->result, "\n";
+        $game->reset;
+
+        do {
+            print {*STDOUT} "Do you wish to continue (Y/N)? ";
+            $response = <STDIN>;
+            chomp($response);
+        } until (defined $response && ($response =~ /^[Y|N]$/i));
+
+    } until ($response =~ /^N$/i);
+
+    print {*STDOUT} "\nThank you.\n";
+}
+
+package main;
 
 use strict; use warnings;
-use Games::Domino;
 
-select(STDOUT);
-$|=1;
-
-my $game = Games::Domino->new;
-
-$SIG{'INT'} = sub {
-    $game->read_mode;
-    print {*STDOUT} "\n\nCaught Interrupt (^C), Aborting the game.\n"; exit(1);
-};
-
-print {*STDOUT} $game->about_game,  "\n";
-$game->pause;
-print {*STDOUT} $game->how_to_play, "\n";
-$game->pause('Press any key to start the game...');
-$game->screen->clear;
-
-my ($response);
-do {
-    my $move = 1;
-    do {
-        my ($index);
-        if ($move % 2 == 1) {
-            print {*STDOUT} $game->show, "\n";
-            do {
-                print {*STDOUT} "Pick your tile [" . $game->get_available_tiles . "] or [B]? ";
-                $index = <STDIN>;
-                chomp $index;
-            } until ($game->is_valid_tile($index));
-        }
-
-        $game->play($index);
-        $move++;
-
-    } until ($game->is_over);
-
-    print {*STDOUT} $game->show, "\n";
-    print {*STDOUT} $game->result, "\n";
-    $game->reset;
-
-    do {
-        print {*STDOUT} "Do you wish to continue (Y/N)? ";
-        $response = <STDIN>;
-        chomp($response);
-    } until (defined $response && ($response =~ /^[Y|N]$/i));
-
-} until ($response =~ /^N$/i);
-
-print {*STDOUT} "\nThank you.\n";
+App::Games::Domino->new_with_options->run;
