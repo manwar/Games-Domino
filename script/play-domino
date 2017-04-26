@@ -6,6 +6,7 @@ use namespace::clean;
 use MooX::Options;
 
 option 'verbose' => (is => 'ro', order => 1, default => sub { 0 }, doc => 'Play the game in verbose mode.');
+option 'cheat'   => (is => 'ro', order => 2, default => sub { 0 }, doc => 'Play the game in cheat mode.'  );
 
 sub run {
     my ($self) = @_;
@@ -13,7 +14,7 @@ sub run {
     select(STDOUT);
     $|=1;
 
-    my $game = Games::Domino->new(debug => $self->{verbose});
+    my $game = Games::Domino->new(debug => $self->{verbose}, cheat => $self->{cheat});
 
     $SIG{'INT'} = sub {
         $game->read_mode;

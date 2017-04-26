@@ -1,5 +1,8 @@
 Revision history for Games::Domino
 
+0.29    Wed Apr 26 13:55:00 2017
+        - Exposed 'cheat' flag.
+
 0.28    Tue Apr 25 10:15:00 2017
         - Updated game script to be more user friendly.
 

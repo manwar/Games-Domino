@@ -1,6 +1,6 @@
 package Games::Domino;
 
-$Games::Domino::VERSION   = '0.28';
+$Games::Domino::VERSION   = '0.29';
 $Games::Domino::AUTHORITY = 'cpan:MANWAR';
 
 =head1 NAME
@@ -9,7 +9,7 @@ Games::Domino - Interface to the Domino game.
 
 =head1 VERSION
 
-Version 0.28
+Version 0.29
 
 =cut
 
@@ -68,6 +68,7 @@ is available to play with.
   USAGE: play-domino [-h] [long options...]
 
     --verbose  Play the game in verbose mode.
+    --cheat    Play the game in cheat mode.
 
     --usage    show a short help message
     -h         show a compact help message
