@@ -1,3 +1,5 @@
+#!/usr/bin/perl
+
 package App::Games::Domino;
 
 use Games::Domino;

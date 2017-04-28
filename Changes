@@ -1,5 +1,9 @@
 Revision history for Games::Domino
 
+0.30    Fri Apr 28 15:20:00 2017
+        - Removed dependency on Moo::Role.
+        - Fixed error in the game script.
+
 0.29    Wed Apr 26 13:55:00 2017
         - Exposed 'cheat' flag.
 
